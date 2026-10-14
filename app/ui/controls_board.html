@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code-to-Governance Intelligence Platform</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#0a0f18;--panel:#0f1623;--card:#131c2b;--card2:#0f1826;--line:#222e42;--text:#e8edf5;--muted:#93a0b4;--accent:#ff5a1f;
+--bad:#f87171;--bad-bg:rgba(248,113,113,.12);--good:#34d399;--good-bg:rgba(52,211,153,.12);--wait:#fbbf24;--wait-bg:rgba(251,191,36,.12);--na:#64748b;--na-bg:rgba(100,116,139,.15)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.55 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.app{display:flex;min-height:100vh}
+.side{width:248px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:16px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:10px;align-items:center;margin:2px 6px 18px}.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;font-weight:800}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em}
+.sec{font-size:10px;letter-spacing:.14em;color:var(--muted);margin:16px 8px 6px}
+.nav a{display:block;padding:8px 10px;border-radius:8px;color:#c4cddb;font-size:14px}.nav a:hover{background:#18233a}.nav a.on{background:#2a1a14;color:#fff}
+.main{flex:1;min-width:0}
+.top{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 24px;background:var(--panel);position:sticky;top:0;z-index:5}
+.pill{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-weight:700}.live{color:#4ade80;border-color:#14532d}.off{color:#f87171;border-color:#7f1d1d}
+.wrap{max-width:1280px;margin:0 auto;padding:26px 24px 70px}
+h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}h2{font-size:12px;letter-spacing:.14em;color:var(--muted);margin:34px 0 12px;font-weight:700;text-transform:uppercase}
+.sub{color:var(--muted)}
+.head{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;justify-content:space-between}
+select{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.strip{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:20px}
+.kpi .n{font-size:34px;font-weight:700;line-height:1.1}.kpi .l{color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase}.kpi .d{color:var(--muted);font-size:12.5px;margin-top:4px}
+.note{margin-top:12px;font-size:12.5px;color:var(--muted)}
+.ringwrap{display:flex;gap:18px;align-items:center}
+.legend{display:flex;flex-direction:column;gap:5px;font-size:12.5px}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px}
+.domains{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.dom{cursor:pointer;transition:border-color .15s,transform .15s}.dom:hover{border-color:#3b4b66;transform:translateY(-1px)}.dom.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.dom h3{margin:0;font-size:16px}.dom p{margin:4px 0 12px;color:var(--muted);font-size:12.5px;min-height:38px}
+.dots{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.dot{width:20px;height:20px;border-radius:6px;border:1px solid rgba(255,255,255,.08)}
+.d-bad{background:var(--bad)}.d-good{background:var(--good)}.d-wait{background:var(--wait)}.d-na{background:var(--na);opacity:.55}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:var(--muted)}
+.cnt{font-size:12.5px;display:flex;gap:12px;flex-wrap:wrap}.cnt b{font-weight:700}
+.two{display:grid;gap:16px;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+@media(max-width:1000px){.two{grid-template-columns:1fr}.side{display:none}}
+.q{display:flex;gap:12px;padding:12px 0;border-top:1px solid #1b2639}.q:first-child{border-top:0}
+.rank{flex:none;width:28px;height:28px;border-radius:50%;background:#1b2840;display:grid;place-items:center;font-weight:700;font-size:13px}
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.c-bad{color:#fecaca;background:var(--bad-bg);border:1px solid rgba(248,113,113,.35)}.c-good{color:#bbf7d0;background:var(--good-bg);border:1px solid rgba(52,211,153,.35)}
+.c-wait{color:#fde68a;background:var(--wait-bg);border:1px solid rgba(251,191,36,.35)}.c-na{color:#cbd5e1;background:var(--na-bg);border:1px solid rgba(100,116,139,.4)}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:5px 11px;background:#121a29;font-size:12.5px;cursor:pointer;color:var(--text)}.btn:hover{border-color:var(--accent)}
+table{width:100%;border-collapse:collapse}th{font-size:11px;color:var(--muted);text-align:left;padding:6px 8px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+td{padding:8px;border-top:1px solid #1b2639;vertical-align:middle}
+.mx td.c{text-align:center}.mx .cell{display:inline-block;width:18px;height:18px;border-radius:5px}
+.mx th.v{writing-mode:vertical-rl;transform:rotate(180deg);height:150px;text-align:left;white-space:nowrap;font-size:11.5px;text-transform:none;letter-spacing:0;color:#aab6c8}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.f{border:1px solid var(--line);background:#121a29;color:var(--text);border-radius:999px;padding:6px 13px;font-size:12.5px;cursor:pointer}.f.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.grp{margin-top:18px}.grp h4{margin:0 0 6px;font-size:13px;color:#cfd8e6}
+.row{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:14px;align-items:start;padding:11px 0;border-top:1px solid #1b2639}
+.row .t b{font-size:14.5px}.row .t div{color:var(--muted);font-size:12.5px;margin-top:2px}
+.ev{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.ev span{font:12px ui-monospace,Consolas,monospace;background:#0a101b;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:#b8c4d6}
+.rp{display:flex;gap:4px;justify-content:flex-end}
+.rp i{width:12px;height:12px;border-radius:4px;display:inline-block}
+.err{background:#2a0f12;border:1px solid #7f1d1d;border-radius:10px;padding:14px;color:#fecaca}
+.empty{color:var(--muted);padding:14px 0}
+.small{font-size:12.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">&#9919;</div><div><small>EXL</small><b>Code-Governance</b></div></div>
+    <div class="sec">GOVERNANCE</div>
+    <nav class="nav"><a href="/overview">Dashboard</a><a href="/repositories">Repositories &amp; Scans</a><a href="/architecture">Architecture</a><a href="/findings">Findings</a><a href="/ai-inventory">AI Inventory</a></nav>
+    <div class="sec">ADVANCED</div>
+    <nav class="nav"><a href="/controls" class="on">Governance Controls</a><a href="/dependencies">Dependencies / SBOM</a><a href="/reviews">Review Requests</a><a href="/evidence-packs">Governance Report</a><a href="/evidence-graph">Evidence Graph</a><a href="/ci-cd">Scan Monitoring</a><a href="/runtime">AI Usage</a><a href="/settings">Settings</a><a href="/audit-log">Audit Log</a><a href="/system-health">System Health</a><a href="/administration">Administration</a></nav>
+  </aside>
+  <div class="main">
+    <div class="top"><b>Governance Controls</b><span style="flex:1"></span><span id="live" class="pill">connecting&hellip;</span></div>
+    <div class="wrap" id="root"><div class="sub">Loading the governance board&hellip;</div></div>
+  </div>
+</div>
+<script>
+(function(){
+  var TOKEN=null; try{TOKEN=localStorage.getItem('cgp_token')}catch(e){}
+  if(!TOKEN){ location.href='/login'; return; }
+  var root=document.getElementById('root');
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  function api(p){ return fetch(p,{headers:{Authorization:'Bearer '+TOKEN}}).then(function(r){
+    if(r.status===401){ try{localStorage.removeItem('cgp_token')}catch(e){} location.href='/login'; throw new Error('Your session ended.'); }
+    if(!r.ok) throw new Error(p+' ('+r.status+')'); return r.json(); }); }
+  function ago(t){ if(!t) return 'never'; var s=(Date.now()-new Date(t).getTime())/1000; if(s<90) return 'just now'; if(s<3600) return Math.round(s/60)+' min ago'; if(s<86400) return Math.round(s/3600)+' h ago'; return Math.round(s/86400)+' days ago'; }
+
+  // blueprint domains (section 7 of the governance blueprint): what each covers and how it is proven
+  var DOMAINS=[
+    ['Privacy','Personal and health data, masking, secrets, logs and retention',['Code','Pattern','Runtime']],
+    ['LLM security','Prompt injection, unsafe output, over-broad access',['Code','Heuristic','Runtime']],
+    ['RAG security','Document access, tenant filters, poisoning, deletion',['Code','Heuristic','Runtime']],
+    ['Agent safety','Tools, permissions, shell access, human approval',['Code','Heuristic','Runtime']],
+    ['Model governance','Provider, model, version, region, fallback',['Code','Heuristic','Owner']],
+    ['Quality','Tests, evaluation, monitoring, review',['Code','Runtime','Owner']],
+    ['Supply chain','Dependencies, licences, unsafe model files',['Code','Heuristic']],
+    ['Cost and tokens','Token limits, context growth, retries',['Code','Heuristic','Runtime']],
+    ['Operations','Audit, versioning, alerts, rollback, rescan',['Code','Runtime','Owner']]
+  ];
+  var PROOF={Code:'Proven from the code',Pattern:'Found by pattern and field analysis',Heuristic:'Suggested by evidence, needs review',Runtime:'Needs live traffic to confirm',Owner:'Needs an owner to confirm'};
+  var state={repo:null,domain:null,filter:'all'};
+  var D={};
+
+  // meaning of one check result: attention | good | wait | na
+  function sem(kind,status){
+    if(status==='FOUND') return kind==='risk'?'bad':'good';
+    if(status==='NOT_FOUND') return kind==='risk'?'good':'bad';
+    if(status==='NOT_APPLICABLE') return 'na';
+    return 'wait';   // NO_DETECTOR, UNKNOWN
+  }
+  function words(kind,s){
+    var m={bad:kind==='risk'?'Risk present':'Missing',good:kind==='risk'?'Not found':'In place',wait:'Waiting for evidence',na:'Does not apply'}; return m[s];
+  }
+  function effective(chk){
+    var by=chk.by_repository||[];
+    var list=state.repo?by.filter(function(x){return x.repository_id===state.repo}):by;
+    if(!list.length){ return sem(chk.kind,chk.status==='MIXED'?'UNKNOWN':chk.status); }
+    var ss=list.map(function(x){return sem(chk.kind,x.status)});
+    if(ss.indexOf('bad')>=0) return 'bad';
+    if(ss.indexOf('wait')>=0 && ss.indexOf('good')<0) return 'wait';
+    if(ss.indexOf('good')>=0) return 'good';
+    if(ss.indexOf('wait')>=0) return 'wait';
+    return 'na';
+  }
+
+  function ring(c){
+    var tot=c.bad+c.good+c.wait+c.na||1, R=52, C=2*Math.PI*R, off=0, segs='';
+    [['bad','#f87171'],['wait','#fbbf24'],['good','#34d399'],['na','#64748b']].forEach(function(p){
+      var v=c[p[0]]; if(!v) return; var len=C*v/tot;
+      segs+='<circle r="'+R+'" cx="70" cy="70" fill="none" stroke="'+p[1]+'" stroke-width="16" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 70 70)"></circle>'; off+=len; });
+    return '<svg width="140" height="140" viewBox="0 0 140 140"><circle r="'+R+'" cx="70" cy="70" fill="none" stroke="#1b2639" stroke-width="16"></circle>'+segs+
+      '<text x="70" y="68" text-anchor="middle" fill="#e8edf5" font-size="26" font-weight="700">'+(c.bad+c.good+c.wait+c.na)+'</text><text x="70" y="88" text-anchor="middle" fill="#93a0b4" font-size="11">checks</text></svg>';
+  }
+
+  function render(){
+    var checks=D.coverage.checks||[];
+    var eff=checks.map(function(c){return {c:c,s:effective(c)}});
+    var cnt={bad:0,good:0,wait:0,na:0}; eff.forEach(function(x){cnt[x.s]++});
+    var answered=cnt.bad+cnt.good, total=checks.length;
+    var repos=D.repos, repoName=state.repo?(repos.filter(function(r){return r.repository_id===state.repo})[0]||{}).name:'All repositories';
+    var lastScan=repos.map(function(r){return r.last_scan_at}).filter(Boolean).sort().slice(-1)[0];
+    var ctl=state.repo?D.byRepo[state.repo]:D.controls;
+    var needAttention=ctl.filter(function(c){return c.plain&&(c.plain.tone==='fail')}).length;
+    var needReview=ctl.filter(function(c){return c.plain&&c.plain.tone==='review'}).length;
+    var passed=ctl.filter(function(c){return c.plain&&c.plain.tone==='pass'}).length;
+
+    var h='';
+    h+='<div class="head"><div><h1>Governance Controls</h1><div class="sub">Every control answered from real evidence in your code, with the reason shown. No made-up score.</div></div>'+
+       '<div><select id="repoSel"><option value="">All repositories</option>'+repos.map(function(r){return '<option value="'+esc(r.repository_id)+'"'+(state.repo===r.repository_id?' selected':'')+'>'+esc(r.name)+'</option>'}).join('')+'</select></div></div>';
+
+    // posture strip
+    h+='<div class="strip">'+
+      '<div class="card kpi"><div class="l">Controls needing attention</div><div class="n" style="color:var(--bad)">'+needAttention+'</div><div class="d">of '+ctl.length+' security checks · '+needReview+' need a review · '+passed+' passed</div></div>'+
+      '<div class="card kpi"><div class="l">Governance checks answered</div><div class="n">'+answered+'<span class="sub" style="font-size:18px"> / '+total+'</span></div><div class="d">'+cnt.wait+' are waiting for runtime or owner evidence</div></div>'+
+      '<div class="card kpi"><div class="l">Risks present</div><div class="n" style="color:'+(cnt.bad?'var(--bad)':'var(--good)')+'">'+cnt.bad+'</div><div class="d">across '+DOMAINS.length+' governance domains</div></div>'+
+      '<div class="card kpi"><div class="l">Evidence freshness</div><div class="n" style="font-size:26px">'+ago(lastScan)+'</div><div class="d">'+esc(repoName)+' · '+(state.repo?'1':repos.length)+' repositor'+((state.repo?1:repos.length)===1?'y':'ies')+' scanned</div></div>'+
+      '</div>';
+
+    // ring + domains
+    h+='<h2>Where things stand, domain by domain</h2><div class="card" style="margin-bottom:14px"><div class="ringwrap">'+ring(cnt)+
+       '<div class="legend"><div><i style="background:#f87171"></i><b>'+cnt.bad+'</b> need attention</div><div><i style="background:#fbbf24"></i><b>'+cnt.wait+'</b> waiting for evidence</div><div><i style="background:#34d399"></i><b>'+cnt.good+'</b> in good shape</div><div><i style="background:#64748b"></i><b>'+cnt.na+'</b> do not apply here</div></div>'+
+       '<div class="sub" style="max-width:520px">Each square below is one governance check. Red needs attention, amber is waiting for evidence that code alone cannot give (live traffic or a named owner), green is in good shape, grey does not apply to this repository. Click a domain to see its checks.</div></div></div>';
+    h+='<div class="domains">'+DOMAINS.map(function(d){
+      var mine=eff.filter(function(x){return x.c.area===d[0]});
+      var c={bad:0,good:0,wait:0,na:0}; mine.forEach(function(x){c[x.s]++});
+      return '<div class="card dom'+(state.domain===d[0]?' sel':'')+'" data-domain="'+esc(d[0])+'"><h3>'+esc(d[0])+'</h3><p>'+esc(d[1])+'</p>'+
+        '<div class="dots">'+mine.map(function(x){return '<span class="dot d-'+x.s+'" title="'+esc(x.c.label+' — '+words(x.c.kind,x.s))+'"></span>'}).join('')+'</div>'+
+        '<div class="cnt"><span style="color:var(--bad)"><b>'+c.bad+'</b> attention</span><span style="color:var(--wait)"><b>'+c.wait+'</b> waiting</span><span style="color:var(--good)"><b>'+c.good+'</b> good</span></div>'+
+        '<div class="tags" style="margin-top:10px">'+d[2].map(function(p){return '<span class="tag" title="'+esc(PROOF[p])+'">'+esc(p)+'</span>'}).join('')+'</div></div>';
+    }).join('')+'</div>';
+
+    // fix first + portfolio
+    var queue=ctl.filter(function(c){return c.plain&&(c.plain.tone==='fail'||c.plain.tone==='review')}).sort(function(a,b){return (a.plain.tone==='fail'?0:1)-(b.plain.tone==='fail'?0:1)});
+    h+='<h2>What to fix first</h2><div class="two"><div class="card">'+
+      (queue.length?queue.map(function(c,i){var bad=c.plain.tone==='fail';
+        return '<div class="q"><div class="rank">'+(i+1)+'</div><div style="min-width:0"><div><span class="chip '+(bad?'c-bad':'c-wait')+'">'+esc(c.plain.label)+'</span> &nbsp;<b>'+esc(c.plain.title)+'</b></div>'+
+          '<div class="sub" style="margin-top:4px">'+esc(c.plain.reason)+'</div>'+(c.plain.next?'<div style="margin-top:6px;font-size:13px"><b>What to do:</b> '+esc(c.plain.next)+'</div>':'')+
+          (c.control_id==='CTRL-SENSITIVE-DATA'?'<div style="margin-top:8px"><a class="btn" href="/findings">Open the findings</a></div>':'')+'</div></div>'}).join('')
+        :'<div class="empty">Nothing needs attention. Every check passed.</div>')+'</div>';
+
+    // portfolio matrix
+    var short={'CTRL-SENSITIVE-DATA':'Personal & health data','CTRL-HARDCODED-SECRETS':'Passwords & keys','CTRL-SBOM':'Software list','CTRL-UNSAFE-EXEC':'Unsafe commands','CTRL-TLS':'Secure connections','CTRL-PROVIDER-DISCLOSURE':'AI services','CTRL-APPROVED-MODELS':'Approved models','CTRL-APPROVED-PROVIDERS':'Approved providers','CTRL-AUTHORIZED-TOOLS':'Authorised tools','CTRL-APPROVED-DESTINATIONS':'Outside connections'};
+    var ids=D.controls.map(function(c){return c.control_id});
+    h+='<div class="card mx"><div class="small" style="margin-bottom:6px"><b style="color:var(--text)">Portfolio view</b> — every repository against the ten security checks. Click a repository to focus the board on it.</div><div style="overflow-x:auto"><table><thead><tr><th>Repository</th>'+ids.map(function(i){return '<th class="v">'+esc(short[i]||i)+'</th>'}).join('')+'</tr></thead><tbody>'+
+      repos.map(function(r){var cs=D.byRepo[r.repository_id]||[];var by={};cs.forEach(function(c){by[c.control_id]=c});
+        return '<tr><td><a href="#" class="rp-sel" data-repo="'+esc(r.repository_id)+'" style="font-weight:600">'+esc(r.name)+'</a></td>'+ids.map(function(i){var c=by[i];var t=c&&c.plain?c.plain.tone:'none';var cl={fail:'d-bad',review:'d-wait',pass:'d-good',none:'d-na'}[t];
+          return '<td class="c"><span class="cell '+cl+'" title="'+esc((c?c.plain.title+' — '+c.plain.label:'')+'')+'"></span></td>'}).join('')+'</tr>'}).join('')+
+      '</tbody></table></div></div></div>';
+
+    // explorer
+    var shown=eff.filter(function(x){
+      if(state.domain && x.c.area!==state.domain) return false;
+      if(state.filter==='bad') return x.s==='bad'; if(state.filter==='wait') return x.s==='wait';
+      if(state.filter==='good') return x.s==='good'; if(state.filter==='na') return x.s==='na'; return true; });
+    h+='<h2>All '+total+' governance checks'+(state.domain?' · '+esc(state.domain):'')+'</h2><div class="card"><div class="filters">'+
+      [['all','All ('+eff.length+')'],['bad','Needs attention ('+cnt.bad+')'],['wait','Waiting for evidence ('+cnt.wait+')'],['good','In good shape ('+cnt.good+')'],['na','Does not apply ('+cnt.na+')']].map(function(f){return '<button class="f'+(state.filter===f[0]?' on':'')+'" data-f="'+f[0]+'">'+f[1]+'</button>'}).join('')+
+      (state.domain?'<button class="f" data-f="__clear">Show all domains ✕</button>':'')+'</div>';
+    if(!shown.length) h+='<div class="empty">No checks match this filter.</div>';
+    DOMAINS.forEach(function(d){
+      var rows=shown.filter(function(x){return x.c.area===d[0]}); if(!rows.length) return;
+      h+='<div class="grp"><h4>'+esc(d[0])+'</h4>'+rows.map(function(x){
+        var c=x.c, cls={bad:'c-bad',good:'c-good',wait:'c-wait',na:'c-na'}[x.s];
+        var by=(c.by_repository||[]);
+        return '<div class="row"><div><span class="chip '+cls+'">'+esc(words(c.kind,x.s))+'</span></div><div class="t"><b>'+esc(c.label)+'</b><div>'+esc(c.detail||'')+'</div>'+
+          ((c.evidence&&c.evidence.length&&x.s!=='na')?'<div class="ev">'+c.evidence.slice(0,3).map(function(e){return '<span>'+esc(e.file)+(e.line?':'+e.line:'')+'</span>'}).join('')+(c.evidence.length>3?'<span>+'+(c.evidence.length-3)+' more</span>':'')+'</div>':'')+
+          (x.s==='wait'?'<div class="small" style="margin-top:6px">Code alone cannot prove this. It needs '+(c.status==='NO_DETECTOR'?'live traffic from a connected application or a named owner to confirm it':'more evidence')+'.</div>':'')+'</div>'+
+          '<div class="rp" title="One square per repository">'+by.map(function(b){return '<i class="d-'+sem(c.kind,b.status)+'" title="'+esc(b.name+' — '+words(c.kind,sem(c.kind,b.status)))+'"></i>'}).join('')+'</div></div>'}).join('')+'</div>';
+    });
+    h+='</div>';
+
+    // standards alignment
+    var fm=D.framework.items||[], seen={}, groups={};
+    fm.forEach(function(i){ var k=i.policy_control_id+'|'+i.platform_control; if(seen[k]) return; seen[k]=1; var g=i.framework_reference||i.framework; (groups[g]=groups[g]||[]).push(i); });
+    var ctrlName={}; D.controls.forEach(function(c){ctrlName[c.control_id]=c.plain?c.plain.title:c.name});
+    h+='<h2>Standards alignment</h2><div class="card"><div class="small" style="margin-bottom:8px">One control, mapped once to every requirement it helps satisfy. This is governance support, not a legal opinion or certification.</div><table><thead><tr><th>Requirement area</th><th>What it asks for</th><th>Answered by</th><th>Met in</th></tr></thead><tbody>'+
+      Object.keys(groups).map(function(g){return groups[g].map(function(i,ix){
+        var ev=i.control_evaluations||[], ok=ev.filter(function(e){return e.status==='PASS'}).length;
+        return '<tr><td>'+(ix===0?'<b>'+esc(g)+'</b><div class="small">'+esc(i.framework||'')+'</div>':'')+'</td><td class="small" style="max-width:420px">'+esc((i.requirement||'').slice(0,170))+'</td><td>'+esc(ctrlName[i.platform_control]||i.platform_control||'—')+'</td><td>'+(ev.length?'<span class="chip '+(ok===ev.length?'c-good':ok?'c-wait':'c-bad')+'">'+ok+' of '+ev.length+' scans</span>':'<span class="small">not yet scanned</span>')+'</td></tr>'}).join('')}).join('')+
+      '</tbody></table></div>';
+
+    root.innerHTML=h;
+    bind();
+  }
+
+  function bind(){
+    var sel=document.getElementById('repoSel'); if(sel) sel.onchange=function(){ state.repo=sel.value||null; render(); };
+    [].forEach.call(document.querySelectorAll('[data-domain]'),function(el){ el.onclick=function(){ var d=el.getAttribute('data-domain'); state.domain=state.domain===d?null:d; render(); var t=document.querySelector('h2:nth-of-type(3)'); }; });
+    [].forEach.call(document.querySelectorAll('[data-f]'),function(el){ el.onclick=function(){ var f=el.getAttribute('data-f'); if(f==='__clear'){ state.domain=null; } else state.filter=f; render(); }; });
+    [].forEach.call(document.querySelectorAll('.rp-sel'),function(el){ el.onclick=function(ev){ ev.preventDefault(); state.repo=el.getAttribute('data-repo'); render(); window.scrollTo({top:0,behavior:'smooth'}); }; });
+  }
+
+  api('/health').then(function(){var e=document.getElementById('live');e.textContent='● LIVE';e.className='pill live'}).catch(function(){var e=document.getElementById('live');e.textContent='○ OFFLINE';e.className='pill off'});
+  Promise.all([api('/governance/controls'),api('/governance/check-coverage'),api('/governance/framework-map'),api('/repositories')]).then(function(r){
+    D.controls=r[0].controls||[]; D.coverage=r[1]; D.framework=r[2]; D.repos=(r[3].items||[]); D.byRepo={};
+    return Promise.all(D.repos.map(function(rp){ return api('/governance/controls?repository_id='+encodeURIComponent(rp.repository_id)).then(function(x){D.byRepo[rp.repository_id]=x.controls||[]}).catch(function(){D.byRepo[rp.repository_id]=[]}); }));
+  }).then(render).catch(function(e){ root.innerHTML='<div class="err"><b>The governance board could not be loaded.</b><br>'+esc(e.message)+'</div>'; });
+})();
+</script>
+</body>
+</html>

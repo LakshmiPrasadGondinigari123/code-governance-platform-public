@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code-to-Governance Intelligence Platform</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#0b111b;--panel:#0f1623;--card:#131c2b;--line:#222e42;--text:#e8edf5;--muted:#93a0b4;--accent:#ff5a1f}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.app{display:flex;min-height:100vh}
+.side{width:248px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:16px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:10px;align-items:center;margin:2px 6px 18px}.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;font-weight:800}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em}
+.sec{font-size:10px;letter-spacing:.14em;color:var(--muted);margin:16px 8px 6px}
+.nav a{display:block;padding:8px 10px;border-radius:8px;color:#c4cddb;font-size:14px}.nav a:hover{background:#18233a}.nav a.on{background:#2a1a14;color:#fff}
+.main{flex:1;min-width:0}
+.top{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 24px;background:var(--panel);position:sticky;top:0;z-index:5}
+.pill{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-weight:700}.live{color:#4ade80;border-color:#14532d}.off{color:#f87171;border-color:#7f1d1d}
+.wrap{max-width:900px;margin:0 auto;padding:28px 24px 60px}
+h1{font-size:24px;line-height:1.3;margin:6px 0 10px}h2{font-size:13px;letter-spacing:.1em;color:var(--muted);margin:28px 0 10px;font-weight:700;text-transform:uppercase}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.chip{display:inline-block;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line);margin-right:6px}
+.high{color:#fecaca;background:#450a0a;border-color:#7f1d1d}.medium{color:#fde68a;background:#422006;border-color:#713f12}.low{color:#bae6fd;background:#082f49;border-color:#0c4a6e}
+.good{color:#bbf7d0;background:#052e16;border-color:#14532d}.plain{color:#cbd5e1;background:#1e293b}
+.big{font-size:17px}.sub{color:var(--muted)}.mono{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+pre{background:#0a101b;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;white-space:pre-wrap;margin:10px 0 0}
+ol{margin:8px 0 0 22px;padding:0}li{margin:6px 0}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:9px;padding:9px 14px;background:#121a29;color:var(--text);cursor:pointer;font-size:14px}.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+table{width:100%;border-collapse:collapse}th{font-size:12px;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid #182234;vertical-align:top}tr.row:hover td{background:#141f33;cursor:pointer}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.kpi .n{font-size:28px;font-weight:700}.kpi .l{color:var(--muted);font-size:12px}
+.err{background:#2a0f12;border:1px solid #7f1d1d;border-radius:10px;padding:14px;color:#fecaca}
+details{margin-top:14px}summary{cursor:pointer;color:var(--muted)}
+.hero{padding:6px 0 4px}.hero h1{font-size:28px;letter-spacing:-.01em;margin:10px 0 12px}
+.crumb{color:var(--muted);font-size:14px}.crumb:hover{color:var(--text)}
+.badges{display:flex;gap:8px;flex-wrap:wrap}.chip{margin:0}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;background:currentColor}
+.summary{font-size:18px;line-height:1.6;margin:22px 0 0;padding:20px 22px;border-radius:14px;background:linear-gradient(180deg,#151f31,#111a29);border:1px solid var(--line)}
+.code{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0a101b;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.code .ln{display:flex;padding:3px 0;color:#7c8aa0}.code .ln span:first-child{width:52px;text-align:right;padding-right:14px;color:#55627a;user-select:none}
+.code .ln.hit{background:rgba(255,90,31,.14);color:#ffd9cc;box-shadow:inset 3px 0 0 var(--accent)}
+.steps{counter-reset:s;list-style:none;margin:0;padding:0}.steps li{counter-increment:s;display:flex;gap:14px;align-items:flex-start;margin:0;padding:12px 0;border-top:1px solid #1a2538}
+.steps li:first-child{border-top:0}.steps li:before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;background:#1b2840;color:#cfe0ff;display:grid;place-items:center;font-size:13px;font-weight:700}
+.section{margin-top:26px}.section h2{margin:0 0 10px}
+.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+/* light reading area */
+.main{background:#f6f8fb;color:#0f172a;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b}
+.main .top{background:#fff;color:#0f172a}
+.main .card{background:#fff;border-color:#e2e8f0;color:#0f172a;box-shadow:0 1px 2px rgba(15,23,42,.06)}
+.main .summary{background:#fff;border-color:#e2e8f0;color:#0f172a;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+.main .chip{border-color:#e2e8f0}.main .high{color:#991b1b;background:#fee2e2;border-color:#fca5a5}.main .medium{color:#92400e;background:#fef3c7;border-color:#fcd34d}.main .low{color:#334155;background:#e2e8f0}
+.main .plain{color:#334155;background:#eef2f7}.main .good{color:#166534;background:#dcfce7;border-color:#86efac}
+.main .btn{background:#fff;color:#0f172a;border-color:#cbd5e1}.main .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.main pre{background:#f1f5f9;border-color:#e2e8f0;color:#0f172a}
+.main td{border-bottom-color:#e2e8f0}.main th{border-bottom-color:#e2e8f0}.main tr.row:hover td{background:#eef2ff}
+.main .steps li{border-top-color:#e2e8f0}.main .steps li:before{background:#e0e7ff;color:#3730a3}
+.main .crumb{color:#475569}.main .crumb:hover{color:#0f172a}
+.snap{margin-top:10px;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#fff;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.snap .ln{display:flex;padding:4px 0;color:#475569}.snap .ln span.n{width:52px;text-align:right;padding-right:14px;color:#94a3b8;user-select:none;flex:none}
+.snap .ln span.t{white-space:pre-wrap;word-break:break-all;padding-right:12px}
+.snap .ln.hit{background:#fff7ed;box-shadow:inset 4px 0 0 #f97316}
+.snap mark{background:#fde047;color:#111827;border-radius:4px;padding:1px 3px;font-weight:700}
+.confbox{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ring div{width:74px;height:74px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;font-size:22px;color:#0f172a}
+.found{display:inline-block;background:#fde047;color:#111827;border-radius:6px;padding:2px 8px;font-family:ui-monospace,Consolas,monospace;font-weight:700}@media(max-width:800px){.side{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">&#9919;</div><div><small>EXL</small><b>Code-Governance</b></div></div>
+    <div class="sec">GOVERNANCE</div>
+    <nav class="nav"><a href="/overview">Dashboard</a><a href="/repositories">Repositories &amp; Scans</a><a href="/architecture">Architecture</a><a href="/findings" class="on">Findings</a><a href="/ai-inventory">AI Inventory</a></nav>
+    <div class="sec">ADVANCED</div>
+    <nav class="nav"><a href="/controls">Governance Controls</a><a href="/dependencies">Dependencies / SBOM</a><a href="/reviews">Review Requests</a><a href="/evidence-packs">Governance Report</a><a href="/evidence-graph">Evidence Graph</a><a href="/ci-cd">Scan Monitoring</a><a href="/runtime">AI Usage</a><a href="/settings">Settings</a><a href="/audit-log">Audit Log</a><a href="/system-health">System Health</a><a href="/administration">Administration</a></nav>
+  </aside>
+  <div class="main">
+    <div class="top"><b id="crumb">Findings</b><span style="flex:1"></span><span id="live" class="pill">connecting&hellip;</span></div>
+    <div class="wrap" id="root"><div class="sub">Loading&hellip;</div></div>
+  </div>
+</div>
+<script>
+(function(){
+  var TOKEN=null; try{TOKEN=localStorage.getItem('cgp_token')}catch(e){}
+  if(!TOKEN){ location.href='/login'; return; }
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  function api(p,opt){
+    var o=Object.assign({headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'}},opt||{});
+    return fetch(p,o).then(function(r){
+      if(r.status===401){ try{localStorage.removeItem('cgp_token')}catch(e){} location.href='/login'; throw new Error('Your session ended. Please sign in again.'); }
+      if(!r.ok){ return r.json().catch(function(){return {}}).then(function(j){ throw new Error(typeof j.detail==='string'?j.detail:('Request failed ('+r.status+')')); }); }
+      return r.json();
+    });
+  }
+  // plain names for rule ids (anything unknown falls back to the finding's own title)
+  var NAMES=[[/^phi\.mrn/,'Medical record number'],[/^phi\.icd10/,'Diagnosis code'],[/^phi\./,'Health information'],
+    [/^pii\.ssn/,'Social Security number'],[/^pii\.email/,'Email address'],[/^pii\.card/,'Payment card number'],[/^pii\./,'Personal information'],
+    [/^secret\./,'Password or key'],[/^flow\.phi-to-llm/,'Health information sent to an AI model without masking'],
+    [/^flow\.pii-to-llm/,'Personal data sent to an AI model without masking'],[/^flow\.masked/,'Sensitive data masked before reaching an AI model'],
+    [/^sec\.eval-exec/,'Code that runs text as a command'],[/^sec\.shell-true/,'Shell command built from text'],[/^sec\.pickle/,'Unsafe data loading'],
+    [/^sec\.yaml/,'Unsafe settings-file loading'],[/^sec\.tls/,'Certificate checking switched off'],[/^sec\.insecure-http/,'Unencrypted web address'],
+    [/^sec\.debug/,'Debug mode switched on'],[/^ai\.model/,'AI model in use'],[/^ai\.provider/,'AI provider in use']];
+  function plain(f){ for(var i=0;i<NAMES.length;i++){ if(NAMES[i][0].test(f.rule_id||'')) return NAMES[i][1]; } return f.title||'Item'; }
+  function klass(f){
+    var r=f.rule_id||'';
+    if(/^flow\./.test(r)) return 'flow';
+    if(/^phi\./.test(r)) return 'phi';
+    if(/^pii\./.test(r)) return 'pii';
+    if(/^secret\./.test(r)) return 'secret';
+    if(/^ai\./.test(r)) return 'ai';
+    return 'code';
+  }
+  var KIND={phi:'Health information',pii:'Personal information',secret:'Password or key',flow:'AI data flow',ai:'AI usage',code:'Code safety'};
+  function imp(sev){ sev=String(sev||'').toUpperCase(); return sev==='CRITICAL'||sev==='HIGH'?['High','high']:sev==='MEDIUM'?['Medium','medium']:['Low','low']; }
+  function when(t){ try{ return new Date(t).toLocaleString() }catch(e){ return '' } }
+  var root=document.getElementById('root');
+  var parts=location.pathname.split('/').filter(Boolean), page=parts[0], id=decodeURIComponent(parts[1]||'');
+  api('/health').then(function(){var e=document.getElementById('live');e.textContent='\u25CF LIVE';e.className='pill live'}).catch(function(){var e=document.getElementById('live');e.textContent='\u25CB OFFLINE';e.className='pill off'});
+
+  function siblings(a){
+    return api('/findings?repository_id='+encodeURIComponent(a.repository_id||'')+'&page_size=500').then(function(r){
+      return (r.items||[]).filter(function(x){ return x.scan_id===a.scan_id; });
+    }).catch(function(){ return []; });
+  }
+
+  function findingPage(){
+    return api('/findings/'+encodeURIComponent(id)+'/analysis').then(function(a){
+      return siblings(a).then(function(all){
+        var same=all.filter(function(x){return x.path===a.path && x.id!==a.id && klass(x)!=='ai';});
+        var group=same.concat([a]);
+        var im=imp(a.severity), k=klass(a), name=plain(a);
+        var lines=group.map(function(x){return x.line}).filter(Boolean).sort(function(x,y){return x-y}).filter(function(v,i,s){return s.indexOf(v)===i});
+        var kinds=[]; group.forEach(function(x){var n=plain(x).toLowerCase(); if(kinds.indexOf(n)<0) kinds.push(n);});
+        var fx=a.suggested_fix||{};
+        // why it matters: specific to what appears together in this file
+        var why;
+        if(k==='phi'&&kinds.length>1) why='In '+a.path+' these appear together: '+kinds.join(', ')+'. Health details combined with identifying details point to a specific patient \u2014 that is what HIPAA calls protected health information, and GDPR treats health data as a special category.';
+        else if(k==='phi') why='This is health information. HIPAA and GDPR protect it strictly, and source code is readable by many people, systems and backups.';
+        else if(k==='pii') why='This is information about an individual. GDPR expects it to be limited to what is needed and kept where access is controlled \u2014 not in source code.';
+        else if(k==='secret') why='A key or password in code gives anyone who can read the repository the same access as the system it unlocks, and it stays valid in git history until it is cancelled.';
+        else if(k==='flow') why='Whatever is placed in a prompt leaves your organisation. Without a masking step it is disclosed exactly as written, and the AI provider becomes a processor of that data \u2014 which needs a signed agreement and a lawful basis.';
+        else why=a.why_it_matters||a.description||'Left in the code, this can put data or systems at risk.';
+        // what to do: file-specific steps first, then the rule's own remediation
+        var steps=[];
+        if(group.length>1) steps.push('Fix all '+group.length+' items in '+a.path+' together \u2014 lines '+lines.join(', ')+'.');
+        (fx.steps||a.remediation_steps||[]).forEach(function(s){ steps.push(s); });
+        if(k==='phi'||k==='pii'||k==='secret') steps.push('If this was ever real, also remove it from git history so old commits do not still hold it: git filter-repo --path '+a.path+' --invert-paths');
+        steps.push('Scan again \u2014 '+(group.length>1?'all '+group.length+' items in this file':'this item')+' should disappear.');
+        var me=all.filter(function(x){return x.id===a.id})[0]||{};
+        var confPct=(me.governance_confidence!=null?Math.round(me.governance_confidence*100):(a.governance_confidence!=null?Math.round(a.governance_confidence*100):null));
+        var confColor=confPct==null?'#94a3b8':(confPct>=85?'#16a34a':(confPct>=65?'#f59e0b':'#ef4444'));
+        var confWord=confPct==null?'Confidence not available':(confPct>=85?'High confidence':(confPct>=65?'Medium confidence':'Low confidence'));
+        var hb={structure:'its field name and value format',pattern:'a value pattern',ner:'a language model reading the text'}[me.detected_by||a.detected_by]||'the scanner';
+        var howFound={structure:'Field-name analysis',pattern:'Pattern match',ner:'Language model'}[me.detected_by||a.detected_by]||'Scanner';
+        var confWhy=confPct==null?'':('We are '+confPct+'% sure this is real '+(k==='phi'?'health':'personal')+' data, based on '+hb+'. '+(confPct>=85?'It matched strongly and is treated as confirmed.':'It is likely real but should be reviewed by a person.'));
+        var foundVal=me.value&&!me.value_masked?String(me.value):(me.value_masked?'•••••••• (hidden for your role)':'');
+        var snap=me.snapshot||a.snapshot||[], hitLine=a.line;
+        var snapHtml=snap.length?snap.map(function(r){var n=r[0],tx=String(r[1]),hit=n===hitLine,v=me.value&&!me.value_masked?String(me.value):'';
+          var body=(hit&&v&&tx.indexOf(v)>=0)?esc(tx.split(v)[0])+'<mark>'+esc(v)+'</mark>'+esc(tx.split(v).slice(1).join(v)):esc(tx);
+          return '<div class="ln'+(hit?' hit':'')+'"><span class="n">'+n+'</span><span class="t">'+body+'</span></div>';}).join(''):'<div class="ln hit"><span class="n">'+esc(a.line)+'</span><span class="t">'+esc(a.redacted_snippet||'')+'</span></div>';        var status=(a.status==='unreviewed'||!a.status)?'Waiting for review':String(a.status).replace(/_/g,' ');
+        root.innerHTML=
+          '<div class="hero"><a class="crumb" href="/findings">\u2190 All findings</a>'+
+          '<h1>'+esc(name)+' \u2014 '+esc(a.path||'your code')+'</h1>'+
+          '<div class="badges"><span class="chip '+im[1]+'"><i class="dot"></i>'+im[0]+' importance</span><span class="chip plain">'+esc(KIND[k])+'</span><span class="chip plain">'+esc(status)+'</span></div></div>'+
+          '<p class="summary">'+esc(a.description||name)+' Found on <b>line '+esc(a.line||'?')+'</b> of <span class="mono">'+esc(a.path||'')+'</span>.'+(group.length>1?' This file has <b>'+group.length+'</b> items of this kind.':'')+'</p>'+
+          '<div class="section"><h2>How sure we are</h2><div class="card confbox"><div class="ring" style="background:conic-gradient('+confColor+' '+confPct+'%,#e2e8f0 0)"><div>'+(confPct==null?'—':confPct+'%')+'</div></div>'+
+            '<div style="flex:1;min-width:240px"><b style="font-size:17px">'+esc(confWord)+'</b><div class="sub" style="margin-top:4px">'+esc(confWhy)+'</div>'+
+            '<div style="margin-top:8px"><span class="chip plain">Found by: '+esc(howFound)+'</span><span class="chip plain">'+esc(me.classification==='CONFIRMED_SENSITIVE'?'Confirmed sensitive':'Needs review')+'</span></div></div></div></div>'+
+          '<div class="section"><h2>What was detected</h2><div class="sub" style="margin:-4px 0 6px">'+esc(a.path)+' \u00B7 line '+esc(a.line)+'</div>'+
+            (foundVal?'<div style="margin:6px 0">Detected value: <span class="found">'+esc(foundVal)+'</span></div>':'')+
+            '<div class="snap">'+snapHtml+'</div></div>'+
+          '<div class="section"><h2>Why this matters</h2><div class="card">'+esc(why)+'</div></div>'+
+          '<div class="section"><h2>What to do</h2><div class="card"><ol class="steps">'+steps.map(function(s){return '<li><span>'+esc(s)+'</span></li>'}).join('')+'</ol>'+
+            (fx.example?'<div class="sub" style="margin-top:14px">Example</div><pre class="mono">'+esc(fx.example)+'</pre>':'')+
+            (fx.verify?'<p class="sub" style="margin-bottom:0">How to check: '+esc(fx.verify)+'</p>':'')+
+            '<div class="actions"><button class="btn primary" id="fixbtn">Suggest a fix for me</button><a class="btn" href="/findings">Back to findings</a></div><div id="fixout"></div></div></div>'+
+          ((fx.frameworks&&fx.frameworks.length)?'<div class="section"><h2>Related standards</h2><div class="card">'+fx.frameworks.map(function(f){return '<span class="chip plain">'+esc(f)+'</span>'}).join('')+'</div></div>':'')+
+          '<details class="section"><summary>Technical details</summary><div class="card" style="margin-top:10px"><div class="mono sub">Rule: '+esc(a.rule_id)+'<br>Found by: '+esc(a.source)+'<br>Scan: '+esc(a.scan_id)+'<br>Item: '+esc(a.id)+'<br>Scanned: '+esc(when(a.scanned_at))+'<br>Repository: '+esc(a.repository||'')+'</div></div></details>';
+        document.getElementById('fixbtn').onclick=function(){
+          var b=this; b.disabled=true; b.textContent='Preparing\u2026';
+          api('/findings/'+encodeURIComponent(id)+'/suggest-fix',{method:'POST',body:'{}'}).then(function(r){
+            var t=r.content||r.suggestion||r.fix||r.summary||r.remediation||r;
+            if(typeof t!=='string') t=JSON.stringify(t,null,2);
+            document.getElementById('fixout').innerHTML='<pre class="mono">'+esc(t)+'</pre>'; b.style.display='none';
+          }).catch(function(e){ document.getElementById('fixout').innerHTML='<div class="err" style="margin-top:12px">'+esc(e.message)+'</div>'; b.disabled=false; b.textContent='Try again'; });
+        };
+      });
+    });
+  }
+
+  function scanPage(){
+    document.getElementById('crumb').textContent='Scan report';
+    return Promise.all([api('/scans/'+encodeURIComponent(id)),api('/scans/'+encodeURIComponent(id)+'/ci-gate').catch(function(){return null})]).then(function(rs){
+      var s=rs[0], g=rs[1];
+      return api('/findings?repository_id='+encodeURIComponent(s.repository_id||'')+'&page_size=500').catch(function(){return {items:[]}}).then(function(fl){
+        var items=(fl.items||[]).filter(function(x){return x.scan_id===(s.scan_id||id);});
+        var hi=items.filter(function(f){return imp(f.severity)[1]==='high'}).length;
+        var name=(s.repo_ref||id).replace(/^https?:\/\/github\.com\//,'').replace(/^zip:/,'');
+        var rows=items.map(function(f){var im=imp(f.severity); return '<tr class="row" onclick="location.href=\'/findings/'+encodeURIComponent(f.id)+'\'"><td><span class="chip '+im[1]+'">'+im[0]+'</span></td><td><b>'+esc(plain(f))+'</b><div class="sub">'+esc(KIND[klass(f)])+'</div></td><td class="mono">'+esc(f.path||'')+(f.line?':'+esc(f.line):'')+'</td></tr>'}).join('');
+        var sm=s.summary||{};
+        var gate=g&&g.block!=null?(g.block?'<div class="card" style="border-color:#7f1d1d"><b>Release blocked.</b> '+(g.reasons||[]).map(function(r){return esc(r.label)+' ('+r.count+')'}).join(' \u00B7 ')+'</div>':'<div class="card" style="border-color:#14532d"><b>Release allowed.</b> No blocking conditions under the active policy.</div>'):'';
+        root.innerHTML=
+          '<a class="sub" href="/repositories">\u2190 Repositories &amp; scans</a><h1>'+esc(name)+'</h1>'+
+          '<div class="sub">Scanned '+esc(when(s.scanned_at))+(s.branch?' \u00B7 branch '+esc(s.branch):'')+'</div>'+
+          '<h2>Summary</h2><div class="grid">'+
+          '<div class="card kpi"><div class="n">'+esc(s.files_scanned!=null?s.files_scanned:(sm.files_scanned||0))+'</div><div class="l">Files checked</div></div>'+
+          '<div class="card kpi"><div class="n">'+items.length+'</div><div class="l">Things found</div></div>'+
+          '<div class="card kpi"><div class="n">'+hi+'</div><div class="l">High importance</div></div>'+
+          '<div class="card kpi"><div class="n">'+esc(sm.components!=null?sm.components:(s.components||[]).length)+'</div><div class="l">Software components</div></div></div>'+
+          (gate?'<h2>Release decision</h2>'+gate:'')+
+          '<h2>Things found ('+items.length+')</h2><div class="card" style="padding:0">'+(rows?'<table><thead><tr><th>Importance</th><th>What</th><th>Where</th></tr></thead><tbody>'+rows+'</tbody></table>':'<div style="padding:16px" class="sub">Nothing was found in this scan.</div>')+'</div>';
+      });
+    });
+  }
+  (page==='findings'?findingPage():scanPage()).catch(function(e){ root.innerHTML='<div class="err"><b>We could not open this page.</b><br>'+esc(e.message)+'<br><br><a class="btn" href="/findings">Back to findings</a></div>'; });
+})();
+</script>
+</body>
+</html>

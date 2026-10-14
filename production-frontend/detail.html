@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code-to-Governance Intelligence Platform</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#0b111b;--panel:#0f1623;--card:#131c2b;--line:#222e42;--text:#e8edf5;--muted:#93a0b4;--accent:#ff5a1f}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.app{display:flex;min-height:100vh}
+.side{width:248px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:16px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:10px;align-items:center;margin:2px 6px 18px}.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;font-weight:800}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em}
+.sec{font-size:10px;letter-spacing:.14em;color:var(--muted);margin:16px 8px 6px}
+.nav a{display:block;padding:8px 10px;border-radius:8px;color:#c4cddb;font-size:14px}.nav a:hover{background:#18233a}.nav a.on{background:#2a1a14;color:#fff}
+.main{flex:1;min-width:0}
+.top{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 24px;background:var(--panel);position:sticky;top:0;z-index:5}
+.pill{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-weight:700}.live{color:#4ade80;border-color:#14532d}.off{color:#f87171;border-color:#7f1d1d}
+.wrap{max-width:900px;margin:0 auto;padding:28px 24px 60px}
+h1{font-size:24px;line-height:1.3;margin:6px 0 10px}h2{font-size:13px;letter-spacing:.1em;color:var(--muted);margin:28px 0 10px;font-weight:700;text-transform:uppercase}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.chip{display:inline-block;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line);margin-right:6px}
+.high{color:#fecaca;background:#450a0a;border-color:#7f1d1d}.medium{color:#fde68a;background:#422006;border-color:#713f12}.low{color:#bae6fd;background:#082f49;border-color:#0c4a6e}
+.good{color:#bbf7d0;background:#052e16;border-color:#14532d}.plain{color:#cbd5e1;background:#1e293b}
+.big{font-size:17px}.sub{color:var(--muted)}.mono{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+pre{background:#0a101b;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;white-space:pre-wrap;margin:10px 0 0}
+ol{margin:8px 0 0 22px;padding:0}li{margin:6px 0}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:9px;padding:9px 14px;background:#121a29;color:var(--text);cursor:pointer;font-size:14px}.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+table{width:100%;border-collapse:collapse}th{font-size:12px;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid #182234;vertical-align:top}tr.row:hover td{background:#141f33;cursor:pointer}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.kpi .n{font-size:28px;font-weight:700}.kpi .l{color:var(--muted);font-size:12px}
+.err{background:#2a0f12;border:1px solid #7f1d1d;border-radius:10px;padding:14px;color:#fecaca}
+details{margin-top:14px}summary{cursor:pointer;color:var(--muted)}
+.hero{padding:6px 0 4px}.hero h1{font-size:28px;letter-spacing:-.01em;margin:10px 0 12px}
+.crumb{color:var(--muted);font-size:14px}.crumb:hover{color:var(--text)}
+.badges{display:flex;gap:8px;flex-wrap:wrap}.chip{margin:0}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;background:currentColor}
+.summary{font-size:18px;line-height:1.6;margin:22px 0 0;padding:20px 22px;border-radius:14px;background:linear-gradient(180deg,#151f31,#111a29);border:1px solid var(--line)}
+.code{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0a101b;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.code .ln{display:flex;padding:3px 0;color:#7c8aa0}.code .ln span:first-child{width:52px;text-align:right;padding-right:14px;color:#55627a;user-select:none}
+.code .ln.hit{background:rgba(255,90,31,.14);color:#ffd9cc;box-shadow:inset 3px 0 0 var(--accent)}
+.steps{counter-reset:s;list-style:none;margin:0;padding:0}.steps li{counter-increment:s;display:flex;gap:14px;align-items:flex-start;margin:0;padding:12px 0;border-top:1px solid #1a2538}
+.steps li:first-child{border-top:0}.steps li:before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;background:#1b2840;color:#cfe0ff;display:grid;place-items:center;font-size:13px;font-weight:700}
+.section{margin-top:26px}.section h2{margin:0 0 10px}
+.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+@media(max-width:800px){.side{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">&#9919;</div><div><small>EXL</small><b>Code-Governance</b></div></div>
+    <div class="sec">GOVERNANCE</div>
+    <nav class="nav"><a href="/overview">Dashboard</a><a href="/repositories">Repositories &amp; Scans</a><a href="/architecture">Architecture</a><a href="/findings" class="on">Findings</a><a href="/ai-inventory">AI Inventory</a></nav>
+    <div class="sec">ADVANCED</div>
+    <nav class="nav"><a href="/ai-governance">Security Evaluations</a><a href="/controls">Governance Controls</a><a href="/dependencies">Dependencies / SBOM</a><a href="/reviews">Review Requests</a><a href="/evidence-packs">Governance Report</a><a href="/evidence-graph">Evidence Graph</a><a href="/ci-cd">Scan Monitoring</a><a href="/runtime">AI Usage</a><a href="/settings">Settings</a><a href="/audit-log">Audit Log</a><a href="/system-health">System Health</a><a href="/administration">Administration</a></nav>
+  </aside>
+  <div class="main">
+    <div class="top"><b id="crumb">Findings</b><span style="flex:1"></span><span id="live" class="pill">connecting&hellip;</span></div>
+    <div class="wrap" id="root"><div class="sub">Loading&hellip;</div></div>
+  </div>
+</div>
+<script>
+(function(){
+  var API='https://backend-production-471b.up.railway.app';
+  var TOKEN=null; try{TOKEN=localStorage.getItem('cgp_token')}catch(e){}
+  if(!TOKEN){ location.href='/login'; return; }
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  function api(p,opt){
+    var o=Object.assign({headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'}},opt||{});
+    return fetch(API+p,o).then(function(r){
+      if(r.status===401){ try{localStorage.removeItem('cgp_token')}catch(e){} location.href='/login'; throw new Error('Your session ended. Please sign in again.'); }
+      if(!r.ok){ return r.json().catch(function(){return {}}).then(function(j){ throw new Error(typeof j.detail==='string'?j.detail:('Request failed ('+r.status+')')); }); }
+      return r.json();
+    });
+  }
+  var ENT={PERSON:"a person's name",DATE_OF_BIRTH:'a date of birth',MEDICAL_DIAGNOSIS:'a medical diagnosis',LOCATION:'an address or place',PHONE_NUMBER:'a phone number',EMAIL_ADDRESS:'an email address',US_SSN:'a Social Security number',CREDIT_CARD:'a card number',IP_ADDRESS:'an internet (IP) address',MEDICAL_RECORD_NUMBER:'a medical record number',MEDICATION:'a medication',DATE_TIME:'a date'};
+  var ENTN={PERSON:"Person's name",DATE_OF_BIRTH:'Date of birth',MEDICAL_DIAGNOSIS:'Medical diagnosis',LOCATION:'Address or place',PHONE_NUMBER:'Phone number',EMAIL_ADDRESS:'Email address',US_SSN:'Social Security number',CREDIT_CARD:'Card number',IP_ADDRESS:'Internet (IP) address',MEDICAL_RECORD_NUMBER:'Medical record number',MEDICATION:'Medication',DATE_TIME:'Date'};
+  var TOOL={presidio:'personal-data scanner',semgrep:'code-safety scanner',gitleaks:'password and key scanner',syft:'software inventory scanner',url:'web-link scanner'};
+  function pretty(t){ return ENTN[t]||String(t||'Item').toLowerCase().replace(/_/g,' ').replace(/^./,function(c){return c.toUpperCase()}); }
+  function imp(sev){ sev=String(sev||'').toUpperCase(); return sev==='ERROR'||sev==='HIGH'||sev==='CRITICAL'?['High','high']:sev==='WARNING'||sev==='MEDIUM'?['Medium','medium']:['Low','low']; }
+  function kind(f){ var d=String(f.data_type||f.finding_type||'').toUpperCase(); return d==='PHI'?'Health information':d==='PII'?'Personal information':d==='SECRETS'||d==='SECRET'?'Password or key':d?pretty(d):'General'; }
+  function when(t){ try{ return new Date(t).toLocaleString() }catch(e){ return '' } }
+  function stepsFor(f){
+    var d=String(f.data_type||f.finding_type||'').toUpperCase();
+    if(d==='PHI') return ['Check whether this is real patient information or a made-up example.','If it is real, remove it from the code and from its history, and keep it only in a protected, access-controlled system.','If it is a made-up example, replace it with clearly fake values so nobody mistakes it for real data.','Scan again to confirm it is gone.'];
+    if(d==='PII') return ['Check whether this is a real person’s information or a made-up example.','If real, remove it from the code and store it in a protected system.','If made-up, replace it with clearly fake values.','Scan again to confirm it is gone.'];
+    if(d==='SECRETS'||d==='SECRET') return ['Treat the password or key as exposed: cancel it and create a new one right away.','Remove it from the code and keep the new one in a secure settings store, not in the code.','Scan again to confirm it is gone.'];
+    return ['Open the file at the line shown and decide whether the issue is real.','Fix it, or write down why it is acceptable.','Scan again to confirm.'];
+  }
+  var root=document.getElementById('root');
+  var parts=location.pathname.split('/').filter(Boolean), kindPage=parts[0], id=decodeURIComponent(parts[1]||'');
+  api('/health').then(function(){var e=document.getElementById('live');e.textContent='● LIVE';e.className='pill live'}).catch(function(){var e=document.getElementById('live');e.textContent='○ OFFLINE';e.className='pill off'});
+
+  function findingPage(){
+    var sid=id.split('__')[0];
+    return api('/findings?scan_id='+encodeURIComponent(sid)+'&page_size=200').then(function(list){
+      var f=(list.items||[]).filter(function(x){return x.id===id})[0];
+      if(!f) throw new Error('We could not find this item. It may belong to a scan that was removed.');
+      return api('/scans/'+encodeURIComponent(sid)).catch(function(){return null}).then(function(s){
+        var src=(s&&s[f.source]&&s[f.source].findings)||[];
+        var d=src.filter(function(x){return (x.path||x.file)===f.path&&String(x.line)===String(f.line)&&(!x.entity_type||x.entity_type===f.title)})[0]||src.filter(function(x){return (x.path||x.file)===f.path&&String(x.line)===String(f.line)})[0]||{};
+        var im=imp(f.severity), k=kind(f), name=pretty(f.title);
+        var what=ENT[f.title]?('The scan found what looks like <b>'+esc(ENT[f.title])+'</b>'):('The scan found <b>'+esc(name.toLowerCase())+'</b>');
+        what+=' on <b>line '+esc(f.line||'?')+'</b> of <span class="mono">'+esc(f.path||'a file')+'</span>.';
+        
+        var status=(f.status==='unreviewed'||!f.status)?'Waiting for a person to review':String(f.status).replace(/_/g,' ');
+        var lines=String(d.redacted_snippet||'').split('\n').map(function(l){
+          var m=/^(>?)\s*(\d+)\s\|\s?(.*)$/.exec(l); return m?{hit:m[1]==='>',n:m[2],t:m[3]}:null; }).filter(Boolean);
+        var code=lines.length?'<div class="code">'+lines.map(function(l){return '<div class="ln'+(l.hit?' hit':'')+'"><span>'+esc(l.n)+'</span><span>'+esc(l.t)+'</span></div>'}).join('')+'</div>':'';
+        var sib=(list.items||[]).filter(function(x){var dt=String(x.data_type||x.finding_type||'').toUpperCase(); return x.path===f.path&&x.id!==f.id&&x.source!=='url'&&(dt==='PHI'||dt==='PII'||dt==='SECRETS'||dt==='SECRET')&&String(x.classification).toUpperCase()!=='SUPPRESSED';});
+        var all=sib.concat([f]);
+        var phiN=all.filter(function(x){return String(x.data_type).toUpperCase()==='PHI'}).length;
+        var piiN=all.filter(function(x){return String(x.data_type).toUpperCase()==='PII'}).length;
+        var ents=[]; all.forEach(function(x){var n=(ENTN[x.title]||pretty(x.title)).toLowerCase(); if(ents.indexOf(n)<0) ents.push(n);});
+        var lnums=all.map(function(x){return x.line}).filter(Boolean).sort(function(a,b){return a-b}).filter(function(v,i,a){return a.indexOf(v)===i});
+        var hit=lines.filter(function(l){return l.hit})[0];
+        var kv=hit&&/["']?([\w .-]+)["']?\s*[:=]\s*["']?([^"',}]*)/.exec(hit.t);
+        var key=kv?kv[1].trim():'', val=kv?kv[2].trim():'';
+        var FAKE=[[/phone|mobile|tel/i,'+1-000-000-0000'],[/e-?mail/i,'user@example.com'],[/dob|birth/i,'1900-01-01'],[/address|street/i,'123 Example Street, Sample City'],[/name/i,'Sample Person'],[/ssn|social/i,'000-00-0000'],[/diagnos|condition/i,'Sample condition'],[/medicat|drug/i,'Sample medication'],[/mrn|record/i,'MRN-000000']];
+        var fake=null; if(key){ FAKE.some(function(r){ if(r[0].test(key)){ fake=r[1]; return true; } return false; }); }
+        var extm=/\.([a-z0-9]+)$/i.exec(f.path||''); var ext=extm?extm[1].toLowerCase():'';
+        var isData=/^(json|csv|ya?ml|txt|xml|sql|tsv)$/.test(ext);
+        var isPhi=String(f.data_type).toUpperCase()==='PHI';
+        var steps=[];
+        if(all.length>1) steps.push('Fix all '+all.length+' items in '+f.path+' together \u2014 they are on lines '+lnums.join(', ')+'.');
+        if(key&&fake&&val) steps.push('On line '+f.line+', replace the value of "'+key+'" with a made-up one, for example "'+key+'": "'+fake+'".');
+        if(isData) steps.push('This is a data file (.'+ext+'). Keep only invented sample records in it; load real records at run time from a protected, access-controlled store.');
+        else steps.push('Do not keep this value in source code. Read it at run time from a protected store or an environment variable.');
+        if(isPhi||String(f.data_type).toUpperCase()==='PII') steps.push('If this was ever real data, also remove it from git history so old commits do not still contain it: git filter-repo --path '+f.path+' --invert-paths');
+        steps.push('Scan again \u2014 this item should disappear'+(all.length>1?' along with the other '+(all.length-1)+' in this file':'')+'.');
+        var why;
+        if(isPhi&&ents.length>1) why='In '+f.path+' these appear together: '+ents.join(', ')+'. A name combined with a date of birth or a diagnosis identifies a patient \u2014 that is exactly what HIPAA calls protected health information, and GDPR treats health data as a special category.';
+        else if(isPhi) why='This is health information. HIPAA and GDPR protect it strictly, and source code is readable by many people, systems and backups.';
+        else if(String(f.data_type).toUpperCase()==='PII') why='This is information about an individual. Under GDPR it should be limited to what is needed and stored where access is controlled \u2014 not in source code.';
+        else why=f.description||'Left in the code, this can put data or systems at risk.';
+        root.innerHTML=
+          '<div class="hero"><a class="crumb" href="/findings">\u2190 All findings</a>'+
+          '<h1>'+esc(name)+' found in '+esc(f.path||'your code')+'</h1>'+
+          '<div class="badges"><span class="chip '+im[1]+'"><i class="dot"></i>'+im[0]+' importance</span><span class="chip plain">'+esc(k)+'</span><span class="chip plain">'+esc(status)+'</span></div></div>'+
+          '<p class="summary">'+what+(all.length>1?' This file has '+all.length+' similar items ('+phiN+' health, '+piiN+' personal).':'')+'</p>'+
+          (code?'<div class="section"><h2>Where it is</h2><div class="sub" style="margin:-4px 0 0">'+esc(f.path)+' \u00B7 line '+esc(f.line)+'</div>'+code+'</div>':'')+
+          '<div class="section"><h2>Why this matters</h2><div class="card">'+esc(why)+'</div></div>'+
+          '<div class="section"><h2>What to do</h2><div class="card"><ol class="steps">'+steps.map(function(s){return '<li><span>'+esc(s)+'</span></li>'}).join('')+'</ol>'+
+          '<div class="actions"><button class="btn primary" id="fixbtn">Suggest a fix for me</button><a class="btn" href="/findings">Back to findings</a></div><div id="fixout"></div></div></div>'+
+          '<details class="section"><summary>Technical details</summary><div class="card" style="margin-top:10px"><div class="mono sub">Found by: '+esc(TOOL[f.source]||f.source)+'<br>Scan: '+esc(sid)+'<br>Item: '+esc(f.id)+'<br>Scanned: '+esc(when(f.scanned_at))+'<br>Repository: '+esc(f.repository||f.repo_ref||'')+'</div></div></details>';
+        document.getElementById('fixbtn').onclick=function(){
+          var b=this; b.disabled=true; b.textContent='Preparing…';
+          api('/scans/'+encodeURIComponent(sid)+'/findings/'+encodeURIComponent(f.id)+'/suggest-fix',{method:'POST',body:'{}'}).then(function(r){
+            var t=r.suggested_fix||r.suggestion||r.fix||r.content||r.remediation||r;
+            if(typeof t!=='string') t=JSON.stringify(t,null,2);
+            document.getElementById('fixout').innerHTML='<pre class="mono">'+esc(t)+'</pre>'; b.style.display='none';
+          }).catch(function(e){ document.getElementById('fixout').innerHTML='<div class="err" style="margin-top:12px">'+esc(e.message)+'</div>'; b.disabled=false; b.textContent='Try again'; });
+        };
+      });
+    });
+  }
+
+  function scanPage(){
+    document.getElementById('crumb').textContent='Scan report';
+    return api('/scans/'+encodeURIComponent(id)).then(function(s){
+      return api('/findings?scan_id='+encodeURIComponent(id)+'&page_size=200').catch(function(){return {items:[]}}).then(function(fl){
+        var items=fl.items||[]; var hi=0,me=0,lo=0; items.forEach(function(f){var c=imp(f.severity)[1]; if(c==='high')hi++; else if(c==='medium')me++; else lo++;});
+        var name=(s.repo_ref||id).replace(/^https?:\/\/github\.com\//,'');
+        var rows=items.map(function(f){var im=imp(f.severity); return '<tr class="row" onclick="location.href=\'/findings/'+encodeURIComponent(f.id)+'\'"><td><span class="chip '+im[1]+'">'+im[0]+'</span></td><td><b>'+esc(pretty(f.title))+'</b><div class="sub">'+esc(kind(f))+'</div></td><td class="mono">'+esc(f.path||'')+(f.line?':'+esc(f.line):'')+'</td></tr>'}).join('');
+        var m=s.manifest||{};
+        root.innerHTML=
+          '<a class="sub" href="/repositories">← Repositories &amp; scans</a><h1>'+esc(name)+'</h1>'+
+          '<div class="sub">Scanned '+esc(when(s.scanned_at))+(m.branch?' · branch '+esc(m.branch):'')+'</div>'+
+          '<h2>Summary</h2><div class="grid">'+
+          '<div class="card kpi"><div class="n">'+esc(m.file_count!=null?m.file_count:0)+'</div><div class="l">Files checked</div></div>'+
+          '<div class="card kpi"><div class="n">'+items.length+'</div><div class="l">Things found</div></div>'+
+          '<div class="card kpi"><div class="n">'+hi+'</div><div class="l">High importance</div></div>'+
+          '<div class="card kpi"><div class="n">'+(((s.syft||{}).component_count)||0)+'</div><div class="l">Software components</div></div></div>'+
+          '<h2>Things found ('+items.length+')</h2><div class="card" style="padding:0">'+(rows?'<table><thead><tr><th>Importance</th><th>What</th><th>Where</th></tr></thead><tbody>'+rows+'</tbody></table>':'<div style="padding:16px" class="sub">Nothing was found in this scan.</div>')+'</div>';
+      });
+    });
+  }
+  (kindPage==='findings'?findingPage():scanPage()).catch(function(e){ root.innerHTML='<div class="err"><b>We could not open this page.</b><br>'+esc(e.message)+'<br><br><a class="btn" href="/findings">Back to findings</a></div>'; });
+})();
+</script>
+</body>
+</html>

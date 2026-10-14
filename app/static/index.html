@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code-to-Governance Intelligence Platform</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#111827;--mute:#6b7280;--line:#e5e7eb;--brand:#4f46e5;--ok:#059669;--warn:#d97706;--bad:#dc2626}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#171a21;--ink:#e5e7eb;--mute:#9ca3af;--line:#2a2f3a;--brand:#818cf8}}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{display:flex;gap:12px;align-items:center;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+header h1{font-size:15px;margin:0 12px 0 0}nav{display:flex;gap:2px;flex-wrap:wrap;flex:1}
+nav a{padding:6px 10px;border-radius:6px;color:var(--mute);text-decoration:none;cursor:pointer}nav a.on,nav a:hover{background:var(--bg);color:var(--ink)}
+main{max-width:1200px;margin:0 auto;padding:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.kpi b{font-size:26px;display:block}.kpi span{color:var(--mute)}
+h2{font-size:16px;margin:0 0 12px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mute);font-weight:600;font-size:12px}
+input,select,textarea,button{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+button{cursor:pointer}button.primary{background:var(--brand);border-color:var(--brand);color:#fff}button.danger{color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.pill{padding:2px 8px;border-radius:99px;font-size:12px;border:1px solid var(--line);white-space:nowrap}
+.critical,.high,.violated,.failed{color:var(--bad);border-color:var(--bad)}.medium,.missing_evidence,.running,.queued{color:var(--warn);border-color:var(--warn)}.satisfied,.completed,.low{color:var(--ok);border-color:var(--ok)}
+.mute{color:var(--mute)}.mono{font-family:ui-monospace,Consolas,monospace;font-size:12px}pre{background:var(--bg);padding:10px;border-radius:6px;overflow:auto;white-space:pre-wrap}
+#login{max-width:340px;margin:12vh auto}#login input{width:100%;margin-bottom:10px}.err{color:var(--bad)}.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let token = null, me = null;
+try { token = localStorage.getItem('cgip_token'); } catch(e) {}
+if (location.hash.startsWith('#sso_token=')) { token = location.hash.slice(11); try { localStorage.setItem('cgip_token', token); } catch(e) {} location.hash = '#overview'; }
+
+async function api(path, opts = {}) {
+  const o = {method: 'GET', headers: {}, ...opts};
+  if (token) o.headers.Authorization = 'Bearer ' + token;
+  if (o.json !== undefined) { o.headers['Content-Type'] = 'application/json'; o.body = JSON.stringify(o.json); }
+  const r = await fetch(path, o);
+  if (r.status === 401 && path !== '/auth/login') { logoutLocal(); throw new Error('Session expired'); }
+  const ct = r.headers.get('content-type') || '';
+  const data = ct.includes('json') ? await r.json() : await r.text();
+  if (!r.ok) throw new Error((data && data.detail) ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : r.statusText);
+  return data;
+}
+async function download(path, name) {
+  const r = await fetch(path, {headers: {Authorization: 'Bearer ' + token}});
+  if (!r.ok) return alert('Download failed: ' + r.statusText);
+  const a = document.createElement('a'); a.href = URL.createObjectURL(await r.blob()); a.download = name; a.click();
+}
+function logoutLocal() { token = null; me = null; try { localStorage.removeItem('cgip_token'); } catch(e) {} render(); }
+const pill = s => `<span class="pill ${esc(s)}">${esc(String(s).replace(/_/g,' '))}</span>`;
+const TABS = ['overview','scans','findings','governance','inventory','graph','runtime','documents','admin'];
+let timer = null;
+
+function shell(inner) {
+  return `<header><h1>Code-to-Governance Intelligence</h1><nav>${TABS.map(t => `<a data-t="${t}" class="${(location.hash.slice(1)||'overview')===t?'on':''}">${t[0].toUpperCase()+t.slice(1)}</a>`).join('')}</nav>
+  <span class="mute">${esc(me.username)} · ${esc(me.role)} · ${esc(me.tenant_id)}</span><button id="out">Sign out</button></header><main>${inner}</main>`;
+}
+function loginView(err='') {
+  return `<div id="login" class="card"><h2>Sign in</h2><input id="u" placeholder="Username" autocomplete="username"><input id="p" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="primary" id="go" style="width:100%">Sign in</button><p class="err">${esc(err)}</p><div id="sso"></div></div>`;
+}
+async function render() {
+  clearInterval(timer);
+  const app = $('#app');
+  if (!token) {
+    app.innerHTML = loginView();
+    const go = async () => { try { const r = await api('/auth/login', {method:'POST', json:{username:$('#u').value, password:$('#p').value}});
+      token = r.token; try { localStorage.setItem('cgip_token', token); } catch(e) {} render(); } catch(e) { app.innerHTML = loginView(e.message); bindLogin(go); } };
+    bindLogin(go);
+    return;
+  }
+  try { me = await api('/auth/me'); } catch(e) { return; }
+  const tab = location.hash.slice(1) || 'overview';
+  app.innerHTML = shell('<p class="mute">Loading…</p>');
+  document.querySelectorAll('nav a').forEach(a => a.onclick = () => { location.hash = a.dataset.t; });
+  $('#out').onclick = async () => { try { await api('/auth/logout', {method:'POST'}); } catch(e) {} logoutLocal(); };
+  const view = views[tab] || views.overview;
+  try { $('main').innerHTML = await view(); if (afterRender[tab]) afterRender[tab](); } catch(e) { $('main').innerHTML = `<div class="card err">${esc(e.message)}</div>`; }
+}
+function bindLogin(go) {
+  $('#go').onclick = go; $('#p').onkeydown = e => { if (e.key === 'Enter') go(); };
+  fetch('/auth/sso/status').then(r => r.json()).then(s => { if (s.enabled) { $('#sso').innerHTML = `<button id="ssob" style="width:100%">Continue with ${esc(s.provider_name)}</button>`;
+    $('#ssob').onclick = async () => { const r = await (await fetch('/auth/sso/login')).json(); location = r.authorization_url; }; } }).catch(()=>{});
+}
+window.onhashchange = render;
+
+const sevBars = c => ['critical','high','medium','low','info'].map(s => `${pill(s)} ${c[s]||0}`).join(' &nbsp; ');
+const views = {
+  async overview() {
+    const o = await api('/overview/summary');
+    return `<div class="grid">
+      <div class="card kpi"><b>${o.repositories}</b><span>Repositories</span></div>
+      <div class="card kpi"><b>${o.findings.open}</b><span>Open findings (${o.findings.total} total)</span></div>
+      <div class="card kpi"><b>${o.controls.satisfied||0}/${(o.controls.satisfied||0)+(o.controls.missing_evidence||0)+(o.controls.violated||0)}</b><span>Controls satisfied</span></div>
+      <div class="card kpi"><b>${o.ai.models}</b><span>AI models · ${o.ai.providers} providers</span></div>
+      <div class="card kpi"><b>${o.runtime.violations}</b><span>Runtime violations / ${o.runtime.events} events</span></div></div>
+    <div class="card"><h2>Open findings by severity</h2>${sevBars(o.findings.by_severity)}</div>
+    <div class="card"><h2>Framework coverage</h2><table>${o.frameworks.map(f => { const p = f.total ? Math.round(100*f.satisfied/f.total) : 0;
+      return `<tr><td>${esc(f.name)}</td><td style="width:50%"><div class="bar"><i style="width:${p}%"></i></div></td><td>${p}%</td></tr>`; }).join('')}</table></div>
+    <div class="card row"><button id="xl">Download Excel report</button><span class="mute">All repositories, findings, controls, components and AI inventory.</span></div>`;
+  },
+  async scans() {
+    const rows = await api('/scans');
+    const can = me.role !== 'viewer';
+    return `${can ? `<div class="card"><h2>New scan</h2><div class="row"><input id="giturl" size="48" placeholder="https://github.com/org/repo"><button class="primary" id="scan">Scan Git URL</button></div>
+      <div class="row"><input type="file" id="zip" accept=".zip"><button id="up">Upload &amp; scan zip</button></div><div id="msg" class="mute"></div></div>` : ''}
+    <div class="card"><h2>Scans</h2><table><tr><th>Repository</th><th>Status</th><th>Findings</th><th>Controls</th><th>Created</th><th></th></tr>
+    ${rows.map(s => `<tr><td>${esc(s.repository_name)}<div class="mute mono">${esc(s.id)}</div></td><td>${pill(s.status)}${s.error?`<div class="err">${esc(s.error)}</div>`:''}</td>
+      <td>${s.summary ? s.summary.findings_total : ''}</td><td>${s.summary ? s.summary.controls_satisfied + '/' + s.summary.controls_total : ''}</td><td class="mute">${esc(s.created_at)}</td>
+      <td>${s.status==='completed' ? `<a href="#findings" data-scan="${s.id}" class="mute">findings</a> · <a data-x="${s.id}" class="mute" style="cursor:pointer">xlsx</a> · <a data-sarif="${s.id}" class="mute" style="cursor:pointer">sarif</a>` : ''}
+      ${['queued','running'].includes(s.status) && can ? `<button data-cancel="${s.id}">Cancel</button>` : ''}</td></tr>`).join('') || '<tr><td colspan=6 class="mute">No scans yet</td></tr>'}</table></div>`;
+  },
+  async findings() {
+    const sc = sessionStorage.getItem('scan') || '';
+    const q = new URLSearchParams(location.search); const f = await api('/findings?limit=300' + (sc ? '&scan_id=' + sc : '') + (window._fsev ? '&severity=' + window._fsev : ''));
+    return `<div class="card"><div class="row"><h2 style="margin:0">Findings (${f.total})</h2>
+      <select id="fsev"><option value="">All severities</option>${['critical','high','medium','low','info'].map(s => `<option ${window._fsev===s?'selected':''}>${s}</option>`).join('')}</select>
+      ${sc ? '<button id="fall">All scans</button>' : ''}</div>
+      <table><tr><th>Sev</th><th>Finding</th><th>Location</th><th>Status</th><th></th></tr>
+      ${f.items.map(x => `<tr><td>${pill(x.severity)}</td><td>${esc(x.title)}<div class="mute">${esc(x.category)} · ${esc(x.rule_id)}</div></td>
+      <td class="mono">${esc(x.file)}:${x.line}<div class="mute">${esc(x.snippet)}</div></td><td>${esc(x.classification)}<div class="mute">${esc(x.governance_status)}</div></td>
+      <td><button data-fix="${x.id}" data-scan="${x.scan_id}">Explain</button>${me.role!=='viewer' ? ` <select data-cls="${x.id}"><option value="">Mark…</option><option>true_positive</option><option>false_positive</option><option>accepted_risk</option><option>remediated</option></select>` : ''}</td></tr>`).join('')
+      || '<tr><td colspan=5 class="mute">No findings</td></tr>'}</table><pre id="expl" style="display:none"></pre></div>`;
+  },
+  async governance() {
+    const fw = await api('/governance/framework-map');
+    const cs = await api('/governance/controls');
+    return `<div class="card"><h2>Frameworks</h2>${fw.map(f => `<p><b>${esc(f.name)}</b> <span class="mute">${esc(f.version)}</span> — ${f.satisfied}/${f.total} controls satisfied (${f.coverage}%)</p>`).join('')}</div>
+    <div class="card"><h2>Controls</h2><table><tr><th>Control</th><th>Status</th><th>Repositories</th><th>Framework references</th></tr>
+    ${cs.map(c => `<tr><td><b>${esc(c.title)}</b><div class="mute">${esc(c.control_id)} — ${esc(c.description)}</div></td><td>${pill(c.status)}</td>
+      <td>${c.repositories.map(r => `${esc(r.repository_name)} ${pill(r.status)}`).join('<br>') || '<span class="mute">not scanned</span>'}</td>
+      <td class="mute">${c.framework_refs.map(r => esc(r.framework) + ': ' + esc(r.refs.join(', '))).join('<br>')}</td></tr>`).join('')}</table></div>`;
+  },
+  async inventory() {
+    const i = await api('/ai-inventory'); const g = await api('/governance/model-governance');
+    return `<div class="card"><h2>Models</h2><table><tr><th>Model</th><th>Provider</th><th>Status</th><th>Repositories</th></tr>${g.map(m => `<tr><td>${esc(m.model)}</td><td>${esc(m.provider)}</td><td>${pill(m.status)}</td><td>${esc(m.repositories.join(', '))}</td></tr>`).join('') || '<tr><td colspan=4 class="mute">No models detected</td></tr>'}</table></div>
+    <div class="card"><h2>SDKs, frameworks and vector stores</h2><table>${i.components.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.category)}</td><td>${esc(c.provider)}</td></tr>`).join('') || '<tr><td class="mute">None detected</td></tr>'}</table></div>
+    <div class="card"><h2>External hosts</h2><p class="mono">${i.hosts.map(esc).join(' · ') || 'none'}</p></div>`;
+  },
+  async graph() {
+    const g = await api('/architecture/graph');
+    const by = {}; g.nodes.forEach(n => (by[n.type] = by[n.type] || []).push(n.label));
+    const label = Object.fromEntries(g.nodes.map(n => [n.key, n.label]));
+    return `<div class="card"><h2>Architecture graph</h2>${Object.entries(by).map(([t, l]) => `<p><b>${esc(t)}</b> (${l.length}): ${l.map(esc).join(', ')}</p>`).join('') || '<p class="mute">Run a scan first.</p>'}</div>
+    <div class="card"><h2>Relationships</h2><table>${g.edges.map(e => `<tr><td>${esc(label[e.src])}</td><td class="mute">${esc(e.type)}</td><td>${esc(label[e.dst])}</td></tr>`).join('')}</table></div>`;
+  },
+  async runtime() {
+    const [s, u, p, ev] = await Promise.all([api('/runtime/status'), api('/runtime/usage/summary'), api('/runtime/policy'), api('/runtime/events?limit=30')]);
+    return `<div class="grid"><div class="card kpi"><b>${s.events_total}</b><span>Events</span></div><div class="card kpi"><b>${s.violations}</b><span>Policy violations</span></div><div class="card kpi"><b>${s.applications}</b><span>Applications</span></div></div>
+    <div class="card"><h2>Approved policy</h2>${me.role==='admin' ? `<div class="row"><label>Providers <input id="pp" size="30" value="${esc(p.approved_providers.join(', '))}"></label>
+      <label>Models <input id="pm" size="30" value="${esc(p.approved_models.join(', '))}"></label></div>
+      <div class="row"><label>Tools <input id="pt" size="30" value="${esc(p.approved_tools.join(', '))}"></label><label>API hosts <input id="ph" size="30" value="${esc(p.approved_api_hosts.join(', '))}"></label>
+      <button class="primary" id="savepol">Save policy</button></div><p class="mute">Empty list = not enforced. Saving re-evaluates stored events.</p>` : `<pre>${esc(JSON.stringify(p, null, 1))}</pre>`}</div>
+    <div class="card"><h2>Recent events</h2><table><tr><th>When</th><th>Type</th><th>Provider / model</th><th>Violations</th></tr>${ev.map(e => `<tr><td class="mute">${esc(e.received_at)}</td><td>${esc(e.event_type)}</td><td>${esc(e.provider)} ${esc(e.model)}</td><td>${(e.violations||[]).map(v => pill(v.code)).join(' ')}</td></tr>`).join('') || '<tr><td colspan=4 class="mute">No events. Send events to POST /runtime/events with an X-Runtime-Key.</td></tr>'}</table></div>`;
+  },
+  async documents() {
+    const d = await api('/governance/documents');
+    return `${me.role!=='viewer' ? `<div class="card"><h2>Upload policy document</h2><div class="row"><input type="file" id="doc" accept=".pdf,.docx,.txt,.md"><input id="dname" placeholder="Name"><input id="dfw" placeholder="Framework (optional)"><button class="primary" id="dup">Upload</button></div><div id="msg" class="mute"></div></div>` : ''}
+    <div class="card"><h2>Policy documents</h2><table><tr><th>Name</th><th>Framework</th><th>Version</th><th>Requirements found</th><th>Status</th></tr>${d.map(x => `<tr><td>${esc(x.name)}</td><td>${esc(x.framework)}</td><td>${esc(x.version)}</td><td>${x.control_count}</td><td>${pill(x.status)}</td></tr>`).join('') || '<tr><td colspan=5 class="mute">None yet</td></tr>'}</table></div>`;
+  },
+  async admin() {
+    if (me.role !== 'admin') return '<div class="card">Admin role required.</div>';
+    const [u, a, l] = await Promise.all([api('/auth/users'), api('/audit-log?limit=50'), api('/llm-status')]);
+    return `<div class="card"><h2>Users</h2><div class="row"><input id="nu" placeholder="username"><input id="np" type="password" placeholder="password (8+)"><select id="nr"><option>viewer</option><option>reviewer</option><option>admin</option></select><button class="primary" id="addu">Add user</button></div><div id="msg" class="err"></div>
+    <table>${u.map(x => `<tr><td>${esc(x.username)}</td><td>${pill(x.role)}</td><td>${x.username !== me.username ? `<button class="danger" data-du="${esc(x.username)}">Delete</button>` : ''}</td></tr>`).join('')}</table></div>
+    <div class="card"><h2>LLM assistant</h2><p>Mode: <b>${esc(l.mode)}</b> ${l.configured ? '(' + esc(l.model) + ')' : '— set GROQ_API_KEY to enable AI explanations'}</p></div>
+    <div class="card"><h2>Audit log</h2><table>${a.map(x => `<tr><td class="mute">${esc(x.ts)}</td><td>${esc(x.user)}</td><td>${esc(x.action)}</td><td class="mono">${esc(x.target)}</td></tr>`).join('')}</table></div>`;
+  }
+};
+
+const afterRender = {
+  overview() { $('#xl').onclick = () => download('/reports/excel', 'governance-report.xlsx'); },
+  scans() {
+    const msg = t => { const m = $('#msg'); if (m) m.textContent = t; };
+    if ($('#scan')) $('#scan').onclick = async () => { try { const r = await api('/scans', {method:'POST', json:{git_url:$('#giturl').value}}); msg('Started ' + r.scan_id); render(); } catch(e) { msg(e.message); } };
+    if ($('#up')) $('#up').onclick = async () => { const f = $('#zip').files[0]; if (!f) return msg('Choose a .zip first'); const fd = new FormData(); fd.append('file', f);
+      try { const r = await api('/scans/upload', {method:'POST', body: fd}); msg('Started ' + r.scan_id); render(); } catch(e) { msg(e.message); } };
+    document.querySelectorAll('[data-cancel]').forEach(b => b.onclick = async () => { await api('/scans/' + b.dataset.cancel + '/cancel', {method:'POST'}); render(); });
+    document.querySelectorAll('[data-x]').forEach(a => a.onclick = () => download('/scans/' + a.dataset.x + '/export/xlsx', 'scan-governance.xlsx'));
+    document.querySelectorAll('[data-sarif]').forEach(a => a.onclick = () => download('/scans/' + a.dataset.sarif + '/export/sarif', 'scan.sarif.json'));
+    document.querySelectorAll('[data-scan]').forEach(a => a.onclick = () => { try { sessionStorage.setItem('scan', a.dataset.scan); } catch(e) {} });
+    if (document.querySelector('.pill.running, .pill.queued')) timer = setInterval(render, 3000);
+  },
+  findings() {
+    $('#fsev').onchange = e => { window._fsev = e.target.value; render(); };
+    if ($('#fall')) $('#fall').onclick = () => { try { sessionStorage.removeItem('scan'); } catch(e) {} render(); };
+    document.querySelectorAll('[data-fix]').forEach(b => b.onclick = async () => { const p = $('#expl'); p.style.display = 'block'; p.textContent = 'Working…';
+      try { const r = await api(`/scans/${b.dataset.scan}/findings/${b.dataset.fix}/explain`, {method:'POST'}); p.textContent = r.content + (r.detail ? '\n\n(' + r.detail + ')' : ''); } catch(e) { p.textContent = e.message; } });
+    document.querySelectorAll('[data-cls]').forEach(s => s.onchange = async () => { if (!s.value) return;
+      await api(`/findings/${s.dataset.cls}/classification-override`, {method:'POST', json:{classification:s.value, comment:'Set from UI'}}); render(); });
+  },
+  runtime() {
+    if ($('#savepol')) $('#savepol').onclick = async () => { const l = id => $(id).value.split(',').map(x => x.trim()).filter(Boolean);
+      await api('/runtime/policy', {method:'PUT', json:{approved_providers:l('#pp'), approved_models:l('#pm'), approved_tools:l('#pt'), approved_api_hosts:l('#ph')}}); render(); };
+  },
+  documents() {
+    if ($('#dup')) $('#dup').onclick = async () => { const f = $('#doc').files[0]; if (!f) return; const fd = new FormData(); fd.append('file', f);
+      fd.append('name', $('#dname').value || f.name); fd.append('framework', $('#dfw').value);
+      try { await api('/governance/documents', {method:'POST', body: fd}); render(); } catch(e) { $('#msg').textContent = e.message; } };
+  },
+  admin() {
+    $('#addu').onclick = async () => { try { await api('/auth/users', {method:'POST', json:{username:$('#nu').value, password:$('#np').value, role:$('#nr').value}}); render(); } catch(e) { $('#msg').textContent = e.message; } };
+    document.querySelectorAll('[data-du]').forEach(b => b.onclick = async () => { if (confirm('Delete user ' + b.dataset.du + '?')) { await api('/auth/users/' + b.dataset.du, {method:'DELETE'}); render(); } });
+  }
+};
+render();
+</script>
+</body>
+</html>

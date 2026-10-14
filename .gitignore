@@ -1,0 +1,16 @@
+.env
+data/
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.db
+*.sqlite
+
+data_old_*/
+logs/
+
+data_old_*/
+logs/
+
+.admin_password

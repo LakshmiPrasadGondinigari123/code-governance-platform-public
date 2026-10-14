@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code-to-Governance Intelligence Platform</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#0a0f18;--panel:#0f1623;--card:#131c2b;--line:#222e42;--text:#e8edf5;--muted:#93a0b4;--accent:#ff5a1f}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.55 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.app{display:flex;min-height:100vh}
+.side{width:248px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:16px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:10px;align-items:center;margin:2px 6px 18px}.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;font-weight:800}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em}
+.sec{font-size:10px;letter-spacing:.14em;color:var(--muted);margin:16px 8px 6px}
+.nav a{display:block;padding:8px 10px;border-radius:8px;color:#c4cddb;font-size:14px}.nav a:hover{background:#18233a}.nav a.on{background:#2a1a14;color:#fff}
+.main{flex:1;min-width:0}
+body.embed .side,body.embed .top,body.embed .head{display:none}body.embed{background:#fff}body.embed .wrap{padding:0;max-width:none}body.embed .repo{margin:0;border:0;border-radius:0}
+.top{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 24px;background:var(--panel);position:sticky;top:0;z-index:5}
+.wrap{max-width:1500px;margin:0 auto;padding:26px 24px 70px}
+h1{font-size:26px;margin:0 0 4px}.sub{color:var(--muted)}
+select{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit}
+.head{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;justify-content:space-between;margin-bottom:16px}
+.repo{background:#fff;color:#0f172a;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:26px}
+.repo h3{margin:0;font-size:18px}.meta{color:#475569;font-size:12.5px;margin:2px 0 10px}
+.agent{display:flex;gap:14px;align-items:flex-start;background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:1px solid #c7d2fe;border-radius:12px;padding:12px 14px;margin:6px 0 12px}
+.agent b{color:#4c1d95}.agent .txt{flex:1;font-size:13.5px;color:#1e293b}
+.btn{border:0;border-radius:999px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;background:#7c3aed;color:#fff;white-space:nowrap}
+.btn.alt{background:#e2e8f0;color:#0f172a}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.chip{border:1px solid #cbd5e1;background:#f8fafc;color:#0f172a;border-radius:999px;padding:4px 12px;font-size:12.5px;cursor:pointer}.chip.on{background:#0f172a;color:#fff;border-color:#0f172a}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:#334155;margin-bottom:10px}
+.legend i{display:inline-block;width:22px;height:0;border-top:3px solid;margin-right:6px;vertical-align:middle}
+.board{overflow-x:auto}
+svg text{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.node{cursor:pointer;transition:opacity .2s}.node:hover rect.card{filter:drop-shadow(0 3px 6px rgba(15,23,42,.25))}.node.sel rect.card{stroke-width:3.5}
+.dim{opacity:.18}.hl rect.card{stroke-width:4;filter:drop-shadow(0 0 8px rgba(124,58,237,.7))}
+.edge{transition:opacity .2s}
+.live .flowp{stroke-dasharray:7 6;animation:flow 1.1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-26}}
+.detail{margin-top:12px;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:12px;padding:12px 14px;display:none;color:#0f172a}
+.detail code{font:12px ui-monospace,Consolas,monospace;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:1px 6px;margin:2px;display:inline-block}
+.livepill{font-size:11px;font-weight:800;color:#15803d;border:1px solid #86efac;background:#f0fdf4;border-radius:999px;padding:3px 10px}
+@media(max-width:1000px){.side{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">&#9919;</div><div><small>EXL</small><b>Code-Governance</b></div></div>
+    <div class="sec">GOVERNANCE</div>
+    <nav class="nav"><a href="/overview">Dashboard</a><a href="/repositories">Repositories &amp; Scans</a><a href="/architecture">Architecture</a><a href="/findings">Findings</a><a href="/ai-inventory">AI Inventory</a></nav>
+    <div class="sec">ADVANCED</div>
+    <nav class="nav"><a href="/controls">Governance Controls</a><a href="/dependencies">Dependencies / SBOM</a><a href="/reviews">Review Requests</a><a href="/evidence-packs">Governance Report</a><a href="/evidence-graph">Evidence Graph</a><a href="/ci-cd">Scan Monitoring</a><a href="/runtime">AI Usage</a><a href="/settings">Settings</a><a href="/audit-log">Audit Log</a><a href="/system-health">System Health</a><a href="/administration">Administration</a></nav>
+  </aside>
+  <div class="main">
+    <div class="top"><b>Repository Maps</b></div>
+    <div class="wrap">
+      <div class="head">
+        <div><h1>Repository architecture</h1><div class="sub">One live-flow diagram per repository, drawn automatically from its latest scan and explained by the architecture agent.</div></div>
+        <select id="pick"><option value="">All repositories</option></select>
+      </div>
+      <div id="root" class="sub">Loading&hellip;</div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var TOKEN=null; try{TOKEN=localStorage.getItem('cgp_token')}catch(e){}
+  if(!TOKEN){ location.href='/login'; return; }
+  var EMBED=/[?&]embed=1/.test(location.search); if(EMBED) document.body.classList.add('embed');
+  function fit(){ if(EMBED&&window.frameElement){ try{ window.frameElement.style.height=(document.querySelector('.wrap').offsetHeight+8)+'px'; }catch(e){} } }
+  if(EMBED&&window.ResizeObserver) new ResizeObserver(fit).observe(document.body);
+  var root=document.getElementById('root'), pick=document.getElementById('pick'), DATA=[], AGENT={}, LIVE=true, FILTER='all';
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  function api(p){ return fetch(p,{headers:{Authorization:'Bearer '+TOKEN}}).then(function(r){
+    if(r.status===401){ try{localStorage.removeItem('cgp_token')}catch(e){} location.href='/login'; throw new Error('Your session ended.'); }
+    if(!r.ok) throw new Error('Could not load ('+r.status+')'); return r.json(); }); }
+
+  var KIND={source:['#64748b','&#9919;'],user:['#2563eb','&#9786;'],entry:['#2563eb','&#8644;'],app:['#0f766e','&#9881;'],ai:['#7c3aed','&#10022;'],model:['#7c3aed','&#10022;'],
+    data:['#16a34a','&#9636;'],queue:['#ea580c','&#8646;'],external:['#64748b','&#8599;'],infra:['#475569','&#9638;'],content:['#0891b2','&#9776;']};
+  var EDGE={sync:['#2563eb','Synchronous request / response'],event:['#16a34a','Data read / event stream'],async:['#ea580c','Asynchronous background job (queue)'],ext:['#64748b','External / third-party integration'],err:['#dc2626','Personal or health data may leave']};
+  var GROUPS={all:null,apps:['app','entry','user','source'],ai:['ai','model'],data:['data','queue'],ext:['external'],infra:['infra']};
+  var LW=150, NW=262, NH=84, GX=24, GY=16, PADY=26, PADX=22, W0=1240;
+  function trunc(s,n){s=String(s==null?'':s);return s.length>n?s.slice(0,n-1)+'…':s;}
+  function edgeKind(e,nodes){ if(e.risk) return 'err'; var t=nodes[e.to]; if(t&&t.kind==='external') return 'ext'; if(e.kind==='queue') return 'async'; if(e.kind==='data') return 'event'; return 'sync'; }
+
+  function draw(r,ri){
+    var sw=r.swim||{lanes:[],edges:[]}, lanes=sw.lanes;
+    if(!lanes.length) return '<div class="repo" id="r-'+esc(r.repository_id)+'"><h3>'+esc(r.name)+'</h3><div class="meta">Nothing to map in this repository.</div></div>';
+    var nodes={}, W=W0, perRow=Math.max(1,Math.floor((W-LW-PADX*2+GX)/(NW+GX))), y=0, pos={};
+    lanes.forEach(function(l,li){
+      var rows=Math.ceil(l.nodes.length/perRow), lh=rows*NH+(rows-1)*GY+PADY*2; l._y=y; l._h=lh;
+      l.nodes.forEach(function(nd,i){nodes[nd.id]=nd; var rr=Math.floor(i/perRow), cc=i%perRow; pos[nd.id]={x:LW+PADX+cc*(NW+GX),y:y+PADY+rr*(NH+GY),lane:li};});
+      y+=lh;
+    });
+    var H=y+4, out=[], ag=AGENT[r.repository_id]||{};
+    out.push('<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">');
+    out.push('<defs>'+Object.keys(EDGE).map(function(k){return '<marker id="m'+ri+'-'+k+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="'+EDGE[k][0]+'"/></marker>'}).join('')+'</defs>');
+    lanes.forEach(function(l,li){
+      out.push('<rect x="0" y="'+l._y+'" width="'+W+'" height="'+l._h+'" fill="'+(li%2?'#eef2f7':'#e3eaf5')+'"/>');
+      out.push('<text x="14" y="'+(l._y+l._h/2-2)+'" font-size="11" font-weight="800" fill="#1e3a8a" letter-spacing=".06em">');
+      var parts=l.label.toUpperCase().split(' / ');
+      parts.forEach(function(t,i){out.push('<tspan x="14" dy="'+(i?14:0)+'">'+esc(t)+(i===0&&parts.length>1?' /':'')+'</tspan>')});
+      out.push('</text>');
+    });
+    var outc={}, inc={}, oi={}, ii={}, labels=[];
+    sw.edges.forEach(function(e){ if(pos[e.from]&&pos[e.to]){ outc[e.from]=(outc[e.from]||0)+1; inc[e.to]=(inc[e.to]||0)+1; } });
+    sw.edges.forEach(function(e,idx){
+      var a=pos[e.from], b=pos[e.to]; if(!a||!b) return;
+      var k=edgeKind(e,nodes), col=EDGE[k][0];
+      var o=oi[e.from]=(oi[e.from]||0)+1, n=ii[e.to]=(ii[e.to]||0)+1;
+      var ox=a.x+NW*(o/(outc[e.from]+1)), ix=b.x+NW*(n/(inc[e.to]+1)), d, lx, ly;
+      if(a.y<b.y-2){ var y1=a.y+NH, y2=b.y, my=(y1+y2)/2; d='M'+ox+','+y1+' C'+ox+','+my+' '+ix+','+my+' '+ix+','+y2; lx=(ox+ix)/2; ly=my; }
+      else if(a.y>b.y+2){ var y1b=a.y, y2b=b.y+NH, myb=(y1b+y2b)/2; d='M'+ox+','+y1b+' C'+ox+','+myb+' '+ix+','+myb+' '+ix+','+y2b; lx=(ox+ix)/2; ly=myb; }
+      else { var right=b.x>a.x, xs=right?a.x+NW:a.x, xe=right?b.x:b.x+NW, yy=a.y+NH/2; d='M'+xs+','+yy+' L'+xe+','+yy; lx=(xs+xe)/2; ly=yy-8; }
+      var pid='p'+ri+'_'+idx;
+      out.push('<g class="edge" data-from="'+esc(e.from)+'" data-to="'+esc(e.to)+'"><path id="'+pid+'" class="flowp" d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2" marker-end="url(#m'+ri+'-'+k+')"/>'+
+        '<circle r="3.6" fill="'+col+'" class="dot"><animateMotion dur="'+(3+(idx%3))+'s" repeatCount="indefinite"><mpath href="#'+pid+'"/></animateMotion></circle></g>');
+      labels.push([lx,ly,e.label,col]);
+    });
+    labels.forEach(function(L){
+      var w=Math.max(30,L[2].length*5.6+10);
+      out.push('<rect x="'+(L[0]-w/2)+'" y="'+(L[1]-8)+'" width="'+w+'" height="15" rx="4" fill="#fff" opacity=".92"/><text x="'+L[0]+'" y="'+(L[1]+3)+'" font-size="9.5" font-weight="700" text-anchor="middle" fill="'+L[3]+'">'+esc(L[2])+'</text>');
+    });
+    lanes.forEach(function(l){ l.nodes.forEach(function(nd){
+      var p=pos[nd.id], kd=KIND[nd.kind]||KIND.app, c=kd[0];
+      var dash=(nd.kind==='external'||nd.kind==='source')?' stroke-dasharray="5 3"':'';
+      var dot=nd.phi?'#e11d48':(nd.pii?'#f59e0b':'#16a34a');
+      out.push('<g class="node" data-id="'+esc(nd.id)+'" data-kind="'+esc(nd.kind)+'"><title>'+esc((ag.nodes&&ag.nodes[nd.id])||nd.label)+'</title>'+
+        '<rect class="card" x="'+p.x+'" y="'+p.y+'" width="'+NW+'" height="'+NH+'" rx="10" fill="#fff" stroke="'+c+'" stroke-width="2"'+dash+'/>'+
+        '<circle cx="'+(p.x+24)+'" cy="'+(p.y+NH/2)+'" r="14" fill="#0f172a"/><text x="'+(p.x+24)+'" y="'+(p.y+NH/2+5)+'" font-size="14" text-anchor="middle" fill="#fff">'+kd[1]+'</text>'+
+        '<text x="'+(p.x+46)+'" y="'+(p.y+24)+'" font-size="13.5" font-weight="800" fill="#0f172a">'+esc(trunc(nd.label,24))+'</text>'+
+        '<text x="'+(p.x+46)+'" y="'+(p.y+41)+'" font-size="10.5" fill="#475569">'+esc(trunc(nd.sub,40))+'</text>'+
+        ((nd.files||[]).length?'<text x="'+(p.x+46)+'" y="'+(p.y+56)+'" font-size="10" fill="#64748b">'+esc(trunc((nd.files.slice(0,3).map(function(f){return f.split('/').pop()})).join(' · '),42))+'</text>':'')+
+        '<circle cx="'+(p.x+NW-10)+'" cy="'+(p.y+10)+'" r="4.5" fill="'+dot+'"/>'+
+        ((nd.phi||nd.pii)?'<text x="'+(p.x+46)+'" y="'+(p.y+72)+'" font-size="10" font-weight="800"><tspan fill="#e11d48">'+(nd.phi?'PHI '+nd.phi+'  ':'')+'</tspan><tspan fill="#d97706">'+(nd.pii?'PII '+nd.pii:'')+'</tspan></text>':'')+
+        '</g>');
+    });});
+    out.push('</svg>');
+    var langs=Object.keys(r.languages||{}).slice(0,5).map(function(k){return k+' '+r.languages[k]}).join(' · ');
+    var chips=[['all','All'],['apps','Applications'],['ai','AI'],['data','Data & queues'],['ext','External systems'],['infra','Infrastructure']];
+    return '<div class="repo'+(LIVE?' live':'')+'" id="r-'+esc(r.repository_id)+'"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3>'+esc(r.name)+'</h3><span class="livepill">&#9679; LIVE FLOW</span></div>'+
+      '<div class="meta">'+(r.files_scanned||0)+' files scanned'+(sw.total>sw.shown?' · showing the '+sw.shown+' most important of '+sw.total+' components':(sw.total?' · all '+sw.total+' components shown':''))+(langs?' · '+esc(langs):'')+' · '+r.findings.phi+' health and '+r.findings.pii+' personal data findings</div>'+
+      '<div class="agent"><div style="font-size:26px">&#10022;</div><div class="txt"><b>Architecture agent</b> <span class="sub" data-src>'+(ag.source==='ai'?'· written by AI from the scan':(ag.source?'· written from the scan':''))+'</span><div data-sum>'+esc(ag.summary||'Reading the scan and writing the explanation…')+'</div></div>'+
+      '<div style="display:flex;flex-direction:column;gap:8px"><button class="btn" data-say>&#9654; Explain with voice</button><button class="btn alt" data-redraw>&#8635; Redraw with agent</button></div></div>'+
+      '<div class="bar">'+chips.map(function(c){return '<span class="chip'+(c[0]===FILTER?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</span>'}).join('')+'<span style="flex:1"></span><button class="btn alt" data-png>&#11015; PNG</button><button class="btn alt" data-pdf>&#11015; PDF</button><button class="btn alt" data-live>'+(LIVE?'Pause flow':'Play flow')+'</button></div>'+
+      '<div class="legend">'+Object.keys(EDGE).map(function(k){return '<span><i style="border-color:'+EDGE[k][0]+'"></i>'+EDGE[k][1]+'</span>'}).join('')+
+      '<span><b style="color:#16a34a">&#9679;</b> no personal data</span><span><b style="color:#f59e0b">&#9679;</b> personal data</span><span><b style="color:#e11d48">&#9679;</b> health data</span></div>'+
+      '<div class="board">'+out.join('')+'</div><div class="detail"></div></div>';
+  }
+
+  // ---- export: the picture carries its own proof of origin (repository, scan id, scan time, file count)
+  function slug(s){return String(s||'repo').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase()||'repo';}
+  function toCanvas(box,r){
+    return new Promise(function(resolve,reject){
+      var svg=box.querySelector('svg'); if(!svg){ reject(new Error('no diagram')); return; }
+      var W=+svg.getAttribute('width'), H=+svg.getAttribute('height');
+      var c=svg.cloneNode(true); c.setAttribute('xmlns','http://www.w3.org/2000/svg');
+      c.querySelectorAll('.dot').forEach(function(d){d.parentNode.removeChild(d)});
+      c.querySelectorAll('.dim,.hl,.sel').forEach(function(d){d.removeAttribute('class')});
+      var xml=new XMLSerializer().serializeToString(c);
+      var img=new Image();
+      img.onload=function(){
+        var S=2, TOP=96, BOT=118, cv=document.createElement('canvas'); cv.width=W*S; cv.height=(H+TOP+BOT)*S;
+        var g=cv.getContext('2d'); g.scale(S,S); g.fillStyle='#fff'; g.fillRect(0,0,W,H+TOP+BOT);
+        var ag=AGENT[r.repository_id]||{};
+        g.fillStyle='#0f172a'; g.font='bold 24px Segoe UI,Arial,sans-serif'; g.fillText('Architecture — '+r.name,24,40);
+        g.fillStyle='#475569'; g.font='13px Segoe UI,Arial,sans-serif';
+        g.fillText((r.files_scanned||0)+' files scanned · '+r.findings.phi+' health and '+r.findings.pii+' personal data findings'+((r.swim&&r.swim.total>r.swim.shown)?' · '+r.swim.shown+' most important of '+r.swim.total+' components':''),24,64);
+        g.fillText('Code-to-Governance Intelligence Platform · discovered automatically from the repository scan',24,84);
+        g.drawImage(img,0,TOP,W,H);
+        var y=TOP+H+26;
+        g.fillStyle='#0f172a'; g.font='bold 12px Segoe UI,Arial,sans-serif'; g.fillText('Legend',24,y);
+        var x=90; Object.keys(EDGE).forEach(function(k){ g.strokeStyle=EDGE[k][0]; g.lineWidth=3; g.beginPath(); g.moveTo(x,y-4); g.lineTo(x+24,y-4); g.stroke(); g.fillStyle='#334155'; g.font='11.5px Segoe UI,Arial,sans-serif'; g.fillText(EDGE[k][1],x+30,y); x+=36+g.measureText(EDGE[k][1]).width+14; });
+        g.fillStyle='#64748b'; g.font='11.5px Segoe UI,Arial,sans-serif';
+        g.fillText('Proof of origin — Repository: '+(r.repo_ref||r.name)+' · Scan ID: '+(r.scan_id||'n/a')+' · Scanned: '+(r.scanned_at||'n/a'),24,y+24);
+        g.fillText('Exported: '+new Date().toISOString()+' · Boxes and arrows come from the scan, not from a drawing. Explanations: '+(ag.source==='ai'?'AI-written from the scan':'written from the scan')+'.',24,y+44);
+        resolve(cv);
+      };
+      img.onerror=function(){ reject(new Error('could not render')); };
+      img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);
+    });
+  }
+  function save(blob,name){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href); a.remove();},1500); }
+  function pdfFrom(canvas){
+    var jpg=atob(canvas.toDataURL('image/jpeg',0.92).split(',')[1]), n=jpg.length, bytes=new Uint8Array(n);
+    for(var i=0;i<n;i++) bytes[i]=jpg.charCodeAt(i);
+    var pw=Math.round(canvas.width/2), ph=Math.round(canvas.height/2), enc=new TextEncoder(), parts=[], offs=[], len=0;
+    function add(x){ var b=typeof x==='string'?enc.encode(x):x; parts.push(b); len+=b.length; }
+    function obj(id,body){ offs[id]=len; add(id+' 0 obj\n'+body+'\nendobj\n'); }
+    add('%PDF-1.4\n');
+    obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+    obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+    obj(3,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+pw+' '+ph+'] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>');
+    offs[4]=len; add('4 0 obj\n<< /Type /XObject /Subtype /Image /Width '+canvas.width+' /Height '+canvas.height+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+n+' >>\nstream\n'); add(bytes); add('\nendstream\nendobj\n');
+    var cs='q '+pw+' 0 0 '+ph+' 0 0 cm /Im0 Do Q';
+    obj(5,'<< /Length '+cs.length+' >>\nstream\n'+cs+'\nendstream');
+    var xref=len, x='xref\n0 6\n0000000000 65535 f \n';
+    for(var k=1;k<=5;k++) x+=('0000000000'+offs[k]).slice(-10)+' 00000 n \n';
+    add(x+'trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF');
+    return new Blob(parts,{type:'application/pdf'});
+  }
+  function exportDiagram(box,r,kind,btn){
+    var old=btn.innerHTML; btn.textContent='Preparing…';
+    toCanvas(box,r).then(function(cv){
+      var base='architecture-'+slug(r.name)+'-'+new Date().toISOString().slice(0,10);
+      if(kind==='png') cv.toBlob(function(b){ save(b,base+'.png'); btn.innerHTML=old; },'image/png');
+      else { save(pdfFrom(cv),base+'.pdf'); btn.innerHTML=old; }
+    }).catch(function(e){ btn.textContent='Could not export'; setTimeout(function(){btn.innerHTML=old},2500); });
+  }
+
+  function applyFilter(box){
+    var ks=GROUPS[FILTER];
+    box.querySelectorAll('.node').forEach(function(n){ n.classList.toggle('dim', !!ks && ks.indexOf(n.getAttribute('data-kind'))<0); });
+    var vis={}; box.querySelectorAll('.node').forEach(function(n){ if(!n.classList.contains('dim')) vis[n.getAttribute('data-id')]=1; });
+    box.querySelectorAll('.edge').forEach(function(e){ e.classList.toggle('dim', !!ks && !(vis[e.getAttribute('data-from')]||vis[e.getAttribute('data-to')])); });
+    box.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('on',c.getAttribute('data-f')===FILTER)});
+  }
+  function speak(box,r){
+    var ag=AGENT[r.repository_id]||{}, steps=[ag.summary||''].concat((ag.flows||[]).map(function(f){return f.text}));
+    var btn=box.querySelector('[data-say]');
+    if(!('speechSynthesis' in window)){ btn.textContent='Voice not available in this browser'; return; }
+    if(speechSynthesis.speaking){ speechSynthesis.cancel(); btn.innerHTML='&#9654; Explain with voice'; return; }
+    btn.innerHTML='&#9632; Stop';
+    var i=0;
+    function next(){
+      box.querySelectorAll('.hl').forEach(function(x){x.classList.remove('hl')});
+      if(i>=steps.length){ btn.innerHTML='&#9654; Explain with voice'; return; }
+      if(i>0){ var f=ag.flows[i-1]; box.querySelectorAll('.node').forEach(function(n){ var id=n.getAttribute('data-id'); if(id===f.from||id===f.to) n.classList.add('hl'); }); }
+      var u=new SpeechSynthesisUtterance(steps[i++]); u.rate=1; u.onend=next; u.onerror=next; speechSynthesis.speak(u);
+    }
+    next();
+  }
+  function wire(list){
+    list.forEach(function(r){
+      var box=document.getElementById('r-'+r.repository_id); if(!box) return; var det=box.querySelector('.detail');
+      applyFilter(box);
+      box.querySelectorAll('.chip').forEach(function(c){c.onclick=function(){FILTER=c.getAttribute('data-f'); document.querySelectorAll('.repo').forEach(applyFilter);}});
+      var lv=box.querySelector('[data-live]'); if(lv) lv.onclick=function(){LIVE=!LIVE; document.querySelectorAll('.repo').forEach(function(b){b.classList.toggle('live',LIVE); b.querySelectorAll('.dot').forEach(function(d){d.style.display=LIVE?'':'none'}); var x=b.querySelector('[data-live]'); if(x) x.textContent=LIVE?'Pause flow':'Play flow';});};
+      var bp=box.querySelector('[data-png]'), bf=box.querySelector('[data-pdf]');
+      if(bp) bp.onclick=function(){ exportDiagram(box,r,'png',bp); };
+      if(bf) bf.onclick=function(){ exportDiagram(box,r,'pdf',bf); };
+      var rd=box.querySelector('[data-redraw]');
+      if(rd) rd.onclick=function(){
+        rd.textContent='Drawing…'; delete AGENT[r.repository_id];
+        api('/architecture/repo-map?repository_id='+encodeURIComponent(r.repository_id)).then(function(d){
+          var nr=(d.repositories||[])[0]; if(nr){ for(var i=0;i<DATA.length;i++){ if(DATA[i].repository_id===nr.repository_id) DATA[i]=nr; } }
+          return api('/architecture/repo-map/agent?refresh=true&repository_id='+encodeURIComponent(r.repository_id));
+        }).then(function(a){ AGENT[r.repository_id]=a; render(); }).catch(function(){ rd.textContent='Try again'; });
+      };
+      var say=box.querySelector('[data-say]'); if(say) say.onclick=function(){speak(box,r)};
+      box.querySelectorAll('.node').forEach(function(el){el.onclick=function(){
+        box.querySelectorAll('.node.sel').forEach(function(x){x.classList.remove('sel')}); el.classList.add('sel');
+        var n=null; ((r.swim||{}).lanes||[]).forEach(function(l){l.nodes.forEach(function(x){if(x.id===el.getAttribute('data-id'))n=x})});
+        if(!n) return; var ag=AGENT[r.repository_id]||{}, note=(ag.nodes||{})[n.id];
+        det.style.display='block';
+        det.innerHTML='<b>'+esc(n.label)+'</b> <span style="color:#475569">'+esc(n.sub)+'</span>'+(note?'<div style="margin-top:6px">'+esc(note)+'</div>':'')+((n.phi||n.pii)?'<div style="margin-top:6px"><b>Found here:</b> '+n.phi+' health and '+n.pii+' personal data items</div>':'')+
+          '<div style="margin-top:8px;color:#475569">'+((n.files||[]).length?('Files'+(n.file_count>n.files.length?' (first '+n.files.length+' of '+n.file_count+')':'')+':'):'No files directly tied to this item.')+'</div><div>'+(n.files||[]).map(function(f){return '<code>'+esc(f)+'</code>'}).join('')+'</div>';
+      }});
+    });
+  }
+  function render(){
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    var id=pick.value, list=DATA.filter(function(r){return !id||r.repository_id===id});
+    root.innerHTML=list.length?list.map(function(r,i){return draw(r,i)}).join(''):'<div class="sub">No completed scans yet. Run a scan to see its map.</div>';
+    wire(list);
+    list.forEach(function(r){ if(!AGENT[r.repository_id]){
+      api('/architecture/repo-map/agent?repository_id='+encodeURIComponent(r.repository_id)).then(function(a){ AGENT[r.repository_id]=a;
+        var box=document.getElementById('r-'+r.repository_id); if(!box) return;
+        box.querySelector('[data-sum]').textContent=a.summary||''; box.querySelector('[data-src]').textContent=a.source==='ai'?'· written by AI from the scan':'· written from the scan';
+      }).catch(function(){}); } });
+  }
+  api('/architecture/repo-map').then(function(d){
+    DATA=d.repositories||[];
+    DATA.forEach(function(r){var o=document.createElement('option');o.value=r.repository_id;o.textContent=r.name;pick.appendChild(o);});
+    var q=(location.search.match(/repo=([^&]+)/)||[])[1]; if(q) pick.value=decodeURIComponent(q);
+    pick.onchange=render; render();
+  }).catch(function(e){ root.innerHTML='<div style="color:#fecaca">'+esc(e.message)+'</div>'; });
+})();
+</script>
+</body>
+</html>
