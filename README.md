@@ -1,5 +1,11 @@
 # Code-to-Governance Intelligence Platform
 
+## Live app
+
+Open the running platform: **https://frontend-production-4985.up.railway.app**
+
+The app asks you to sign in. To run your own copy instead, follow the steps below (set your own `ADMIN_PASSWORD`).
+
 Turn an AI application repository into governance-ready, traceable technical evidence.
 
 Point it at a Git URL (or upload a zip) and it produces:
