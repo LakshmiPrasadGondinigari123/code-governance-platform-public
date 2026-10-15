@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, File, Header, HTTPException, Query, Requ
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse, StreamingResponse
 from pydantic import BaseModel
 
-from . import auth, db, llm, scans as scan_mod
+from . import auth, bus, db, llm, scans as scan_mod
 from .common import audit, now, scan_or_404, latest_scans
 
 router = APIRouter()
@@ -335,6 +335,7 @@ def delete_all_scans(user: dict = Depends(auth.require("admin"))):
     for col in ("scans", "findings", "findings_evidence", "graphs", "inventory", "repositories", "triage"):
         db.clear(col, t)
     audit(user, "scan.delete_all", "", {"deleted": n})
+    bus.publish(t, "findings", {"type": "findings_updated", "reason": "scan_deleted"})
     return {"status": "deleted", "scans_deleted": n}
 
 
@@ -422,6 +423,7 @@ def delete_scan(scan_id: str, user: dict = Depends(auth.require("admin"))):
         else:
             db.delete("repositories", t, repo["id"])
     audit(user, "scan.delete", scan_id)
+    bus.publish(t, "findings", {"type": "findings_updated", "reason": "scan_deleted", "scan_id": scan_id, "repository_id": s["repository_id"]})
     return {"status": "deleted", "scan_id": scan_id}
 
 

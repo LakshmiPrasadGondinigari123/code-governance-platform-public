@@ -47,17 +47,17 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--muted)}
 .section{margin-top:26px}.section h2{margin:0 0 10px}
 .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
 /* light reading area */
-.main{background:#f6f8fb;color:#0f172a;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b}
-.main .top{background:#fff;color:#0f172a}
-.main .card{background:#fff;border-color:#e2e8f0;color:#0f172a;box-shadow:0 1px 2px rgba(15,23,42,.06)}
-.main .summary{background:#fff;border-color:#e2e8f0;color:#0f172a;box-shadow:0 1px 3px rgba(15,23,42,.08)}
-.main .chip{border-color:#e2e8f0}.main .high{color:#991b1b;background:#fee2e2;border-color:#fca5a5}.main .medium{color:#92400e;background:#fef3c7;border-color:#fcd34d}.main .low{color:#334155;background:#e2e8f0}
-.main .plain{color:#334155;background:#eef2f7}.main .good{color:#166534;background:#dcfce7;border-color:#86efac}
-.main .btn{background:#fff;color:#0f172a;border-color:#cbd5e1}.main .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.main pre{background:#f1f5f9;border-color:#e2e8f0;color:#0f172a}
-.main td{border-bottom-color:#e2e8f0}.main th{border-bottom-color:#e2e8f0}.main tr.row:hover td{background:#eef2ff}
-.main .steps li{border-top-color:#e2e8f0}.main .steps li:before{background:#e0e7ff;color:#3730a3}
-.main .crumb{color:#475569}.main .crumb:hover{color:#0f172a}
+html.light .main{background:#f6f8fb;color:#0f172a;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b}
+html.light .main .top{background:#fff;color:#0f172a}
+html.light .main .card{background:#fff;border-color:#e2e8f0;color:#0f172a;box-shadow:0 1px 2px rgba(15,23,42,.06)}
+html.light .main .summary{background:#fff;border-color:#e2e8f0;color:#0f172a;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+html.light .main .chip{border-color:#e2e8f0}.main .high{color:#991b1b;background:#fee2e2;border-color:#fca5a5}.main .medium{color:#92400e;background:#fef3c7;border-color:#fcd34d}.main .low{color:#334155;background:#e2e8f0}
+html.light .main .plain{color:#334155;background:#eef2f7}.main .good{color:#166534;background:#dcfce7;border-color:#86efac}
+html.light .main .btn{background:#fff;color:#0f172a;border-color:#cbd5e1}.main .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+html.light .main pre{background:#f1f5f9;border-color:#e2e8f0;color:#0f172a}
+html.light .main td{border-bottom-color:#e2e8f0}.main th{border-bottom-color:#e2e8f0}.main tr.row:hover td{background:#eef2ff}
+html.light .main .steps li{border-top-color:#e2e8f0}.main .steps li:before{background:#e0e7ff;color:#3730a3}
+html.light .main .crumb{color:#475569}.main .crumb:hover{color:#0f172a}
 .snap{margin-top:10px;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#fff;font-family:ui-monospace,Consolas,monospace;font-size:13px}
 .snap .ln{display:flex;padding:4px 0;color:#475569}.snap .ln span.n{width:52px;text-align:right;padding-right:14px;color:#94a3b8;user-select:none;flex:none}
 .snap .ln span.t{white-space:pre-wrap;word-break:break-all;padding-right:12px}
@@ -67,14 +67,28 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--muted)}
 .ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;flex:none}
 .ring div{width:74px;height:74px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;font-size:22px;color:#0f172a}
 .found{display:inline-block;background:#fde047;color:#111827;border-radius:6px;padding:2px 8px;font-family:ui-monospace,Consolas,monospace;font-weight:700}@media(max-width:800px){.side{display:none}}
+.themebtn{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-left:auto}
+html.light{--bg:#f6f8fb;--panel:#fff;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b}
+html.light .side{--panel:#0f1623;--line:#222e42;--text:#e8edf5;--muted:#93a0b4;color:#e8edf5}
+html.light select,html.light input,html.light .filters input,html.light .filters select{background:#fff;color:#0f172a;border-color:#cbd5e1}
+html.light .reset{color:#475569;border-color:#cbd5e1;background:#fff}
+html.light .sub{color:#64748b}.snap{background:#fff}
+html.dark .snap{background:#0a101b;border-color:#222e42}html.dark .snap .ln{color:#cbd5e1}html.dark .snap .ln.hit{background:rgba(249,115,22,.15)}html.dark .snap .ln span.n{color:#64748b}html.dark .ring div{background:#131c2b;color:#e8edf5}
 </style>
 </head>
 <body>
-<div class="app">
+<script>
+(function(){
+  function dark(){ var t=null; try{t=localStorage.getItem('theme')}catch(e){} if(t==='dark') return true; if(t==='light') return false; return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches); }
+  function apply(){ var d=dark(), h=document.documentElement; h.classList.toggle('dark',d); h.classList.toggle('light',!d); var b=document.getElementById('themeBtn'); if(b) b.textContent=d?'\u2600 Light':'\u263E Dark'; }
+  apply();
+  window.addEventListener('storage',function(e){ if(!e.key||e.key==='theme') apply(); });
+  })();
+</script><div class="app">
   <aside class="side">
     <div class="brand"><div class="logo">&#9919;</div><div><small>EXL</small><b>Code-Governance</b></div></div>
     <div class="sec">GOVERNANCE</div>
-    <nav class="nav"><a href="/overview">Dashboard</a><a href="/repositories">Repositories &amp; Scans</a><a href="/architecture">Architecture</a><a href="/findings" class="on">Findings</a><a href="/ai-inventory">AI Inventory</a></nav>
+    <nav class="nav"><a href="/overview">Dashboard</a><a href="/architecture">Architecture</a><a href="/findings" class="on">Findings</a><a href="/ai-inventory">AI Inventory</a><a href="/repositories">Repositories &amp; Scans</a></nav>
     <div class="sec">ADVANCED</div>
     <nav class="nav"><a href="/controls">Governance Controls</a><a href="/dependencies">Dependencies / SBOM</a><a href="/reviews">Review Requests</a><a href="/evidence-packs">Governance Report</a><a href="/evidence-graph">Evidence Graph</a><a href="/ci-cd">Scan Monitoring</a><a href="/runtime">AI Usage</a><a href="/settings">Settings</a><a href="/audit-log">Audit Log</a><a href="/system-health">System Health</a><a href="/administration">Administration</a></nav>
   </aside>
@@ -127,71 +141,71 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--muted)}
     }).catch(function(){ return []; });
   }
 
+  var HELP=[[/diagnos/,"It shows what medical condition a patient has, to anyone who can open this repository.","Replace it with made-up test values, or remove the field."],
+    [/record number|mrn/,"This number opens a patient's full medical file.","Replace it with a fake ID such as MRN-TEST-0001."],
+    [/social security|ssn/,"With a name and this number, someone could open accounts in the person's name.","Remove it, or use a clearly fake number such as 000-00-0000."],
+    [/birth|dob/,"A birth date together with a name can point to one exact person.","Keep only the year, or use a made-up date."],
+    [/medicat|drug|prescri/,"It shows what the patient is being treated for.","Use a general placeholder instead."],
+    [/lab|result/,"Test results are some of the most private medical details.","Remove it from the code and sample files."],
+    [/card|payment/,"A real card number can be copied and used for fraud.","Remove it and use the payment provider's test card numbers."],
+    [/bank|account|iban/,"Bank details can be used for fraud or unwanted withdrawals.","Remove it, or keep only the last 4 digits."],
+    [/email/,"It links the record to a real person and can be used for scam emails.","Use an example.com address instead."],
+    [/phone/,"It lets someone contact or trace the person.","Use a made-up number such as 555-0100."],
+    [/address|street|zip/,"It shows where a real person lives.","Use a made-up address instead."],
+    [/name/,"A name makes the other details belong to one real person.","Use made-up names in test data."],
+    [/insur|policy|member/,"It can be used to claim benefits in someone else's name.","Replace it with a fake value."],
+    [/passport|licen|national|id/,"Official ID numbers are a favourite target for identity fraud.","Replace it with a fake value."]];
   function findingPage(){
     return api('/findings/'+encodeURIComponent(id)+'/analysis').then(function(a){
       return siblings(a).then(function(all){
+        var me=all.filter(function(x){return x.id===a.id})[0]||{};
         var same=all.filter(function(x){return x.path===a.path && x.id!==a.id && klass(x)!=='ai';});
         var group=same.concat([a]);
-        var im=imp(a.severity), k=klass(a), name=plain(a);
+        var im=imp(a.severity), k=klass(a), health=(k==='phi');
+        var name=a.title||plain(a), tt=String(name).toLowerCase();
         var lines=group.map(function(x){return x.line}).filter(Boolean).sort(function(x,y){return x-y}).filter(function(v,i,s){return s.indexOf(v)===i});
-        var kinds=[]; group.forEach(function(x){var n=plain(x).toLowerCase(); if(kinds.indexOf(n)<0) kinds.push(n);});
-        var fx=a.suggested_fix||{};
-        // why it matters: specific to what appears together in this file
-        var why;
-        if(k==='phi'&&kinds.length>1) why='In '+a.path+' these appear together: '+kinds.join(', ')+'. Health details combined with identifying details point to a specific patient \u2014 that is what HIPAA calls protected health information, and GDPR treats health data as a special category.';
-        else if(k==='phi') why='This is health information. HIPAA and GDPR protect it strictly, and source code is readable by many people, systems and backups.';
-        else if(k==='pii') why='This is information about an individual. GDPR expects it to be limited to what is needed and kept where access is controlled \u2014 not in source code.';
-        else if(k==='secret') why='A key or password in code gives anyone who can read the repository the same access as the system it unlocks, and it stays valid in git history until it is cancelled.';
-        else if(k==='flow') why='Whatever is placed in a prompt leaves your organisation. Without a masking step it is disclosed exactly as written, and the AI provider becomes a processor of that data \u2014 which needs a signed agreement and a lawful basis.';
-        else why=a.why_it_matters||a.description||'Left in the code, this can put data or systems at risk.';
-        // what to do: file-specific steps first, then the rule's own remediation
-        var steps=[];
-        if(group.length>1) steps.push('Fix all '+group.length+' items in '+a.path+' together \u2014 lines '+lines.join(', ')+'.');
-        (fx.steps||a.remediation_steps||[]).forEach(function(s){ steps.push(s); });
-        if(k==='phi'||k==='pii'||k==='secret') steps.push('If this was ever real, also remove it from git history so old commits do not still hold it: git filter-repo --path '+a.path+' --invert-paths');
-        steps.push('Scan again \u2014 '+(group.length>1?'all '+group.length+' items in this file':'this item')+' should disappear.');
-        var me=all.filter(function(x){return x.id===a.id})[0]||{};
+        var h=null; for(var i=0;i<HELP.length;i++){ if(HELP[i][0].test(tt)){ h=HELP[i]; break; } }
+        var kindWord=health?'Health data':'Personal data';
+        var why=h?h[1]:(health?'Health details are protected by law and should not sit in code.':'Personal details should not be kept in code or shared without protection.');
+        var fix=h?h[2]:'Replace it with made-up test data or remove it.';
         var confPct=(me.governance_confidence!=null?Math.round(me.governance_confidence*100):(a.governance_confidence!=null?Math.round(a.governance_confidence*100):null));
         var confColor=confPct==null?'#94a3b8':(confPct>=85?'#16a34a':(confPct>=65?'#f59e0b':'#ef4444'));
         var confWord=confPct==null?'Confidence not available':(confPct>=85?'High confidence':(confPct>=65?'Medium confidence':'Low confidence'));
-        var hb={structure:'its field name and value format',pattern:'a value pattern',ner:'a language model reading the text'}[me.detected_by||a.detected_by]||'the scanner';
-        var howFound={structure:'Field-name analysis',pattern:'Pattern match',ner:'Language model'}[me.detected_by||a.detected_by]||'Scanner';
-        var confWhy=confPct==null?'':('We are '+confPct+'% sure this is real '+(k==='phi'?'health':'personal')+' data, based on '+hb+'. '+(confPct>=85?'It matched strongly and is treated as confirmed.':'It is likely real but should be reviewed by a person.'));
-        var foundVal=me.value&&!me.value_masked?String(me.value):(me.value_masked?'•••••••• (hidden for your role)':'');
+        var foundVal=me.value&&!me.value_masked?String(me.value):'';
         var snap=me.snapshot||a.snapshot||[], hitLine=a.line;
-        var snapHtml=snap.length?snap.map(function(r){var n=r[0],tx=String(r[1]),hit=n===hitLine,v=me.value&&!me.value_masked?String(me.value):'';
+        var snapHtml=snap.length?snap.map(function(r){var n=r[0],tx=String(r[1]),hit=n===hitLine,v=foundVal;
           var body=(hit&&v&&tx.indexOf(v)>=0)?esc(tx.split(v)[0])+'<mark>'+esc(v)+'</mark>'+esc(tx.split(v).slice(1).join(v)):esc(tx);
-          return '<div class="ln'+(hit?' hit':'')+'"><span class="n">'+n+'</span><span class="t">'+body+'</span></div>';}).join(''):'<div class="ln hit"><span class="n">'+esc(a.line)+'</span><span class="t">'+esc(a.redacted_snippet||'')+'</span></div>';        var status=(a.status==='unreviewed'||!a.status)?'Waiting for review':String(a.status).replace(/_/g,' ');
+          return '<div class="ln'+(hit?' hit':'')+'"><span class="n">'+n+'</span><span class="t">'+body+'</span></div>';}).join(''):'';
+        var status=(a.status==='unreviewed'||!a.status)?'Waiting for review':String(a.status).replace(/_/g,' ');
+        var steps=[];
+        if(group.length>1) steps.push('This file has '+group.length+' items like this (lines '+lines.join(', ')+'). Fix them all together.');
+        steps.push(fix);
+        steps.push('Hide (mask) this kind of data before it is saved in logs or sent to an AI service.');
+        steps.push('Run a new scan to confirm it is gone.');
         root.innerHTML=
           '<div class="hero"><a class="crumb" href="/findings">\u2190 All findings</a>'+
-          '<h1>'+esc(name)+' \u2014 '+esc(a.path||'your code')+'</h1>'+
-          '<div class="badges"><span class="chip '+im[1]+'"><i class="dot"></i>'+im[0]+' importance</span><span class="chip plain">'+esc(KIND[k])+'</span><span class="chip plain">'+esc(status)+'</span></div></div>'+
-          '<p class="summary">'+esc(a.description||name)+' Found on <b>line '+esc(a.line||'?')+'</b> of <span class="mono">'+esc(a.path||'')+'</span>.'+(group.length>1?' This file has <b>'+group.length+'</b> items of this kind.':'')+'</p>'+
-          '<div class="section"><h2>How sure we are</h2><div class="card confbox"><div class="ring" style="background:conic-gradient('+confColor+' '+confPct+'%,#e2e8f0 0)"><div>'+(confPct==null?'—':confPct+'%')+'</div></div>'+
-            '<div style="flex:1;min-width:240px"><b style="font-size:17px">'+esc(confWord)+'</b><div class="sub" style="margin-top:4px">'+esc(confWhy)+'</div>'+
-            '<div style="margin-top:8px"><span class="chip plain">Found by: '+esc(howFound)+'</span><span class="chip plain">'+esc(me.classification==='CONFIRMED_SENSITIVE'?'Confirmed sensitive':'Needs review')+'</span></div></div></div></div>'+
-          '<div class="section"><h2>What was detected</h2><div class="sub" style="margin:-4px 0 6px">'+esc(a.path)+' \u00B7 line '+esc(a.line)+'</div>'+
-            (foundVal?'<div style="margin:6px 0">Detected value: <span class="found">'+esc(foundVal)+'</span></div>':'')+
-            '<div class="snap">'+snapHtml+'</div></div>'+
-          '<div class="section"><h2>Why this matters</h2><div class="card">'+esc(why)+'</div></div>'+
+          '<h1>'+esc(name)+' found in '+esc(a.path||'your code')+'</h1>'+
+          '<div class="badges"><span class="chip '+im[1]+'"><i class="dot"></i>'+im[0]+' importance</span><span class="chip plain">'+kindWord+'</span><span class="chip plain">'+esc(status)+'</span></div></div>'+
+          '<p class="summary">'+kindWord+' ('+esc(tt)+') is stored in the file <b>'+esc(a.path||'')+'</b>, on <b>line '+esc(a.line||'?')+'</b>.'+(group.length>1?' The same file has <b>'+(group.length-1)+' more</b> like it.':'')+'</p>'+
+          '<div class="section"><h2>How sure we are</h2><div class="card confbox"><div class="ring" style="background:conic-gradient('+confColor+' '+(confPct||0)+'%,#e2e8f0 0)"><div>'+(confPct==null?'\u2014':confPct+'%')+'</div></div>'+
+            '<div style="flex:1;min-width:220px"><b style="font-size:17px">'+esc(confWord)+'</b><div class="sub" style="margin-top:4px">'+(confPct==null?'':'We are '+confPct+'% sure this is real '+(health?'health':'personal')+' data.')+'</div></div></div></div>'+
+          '<div class="section"><h2>What we found</h2>'+
+            (foundVal?'<div style="margin:6px 0">Value found: <span class="found">'+esc(foundVal)+'</span></div>':'')+
+            (snapHtml?'<div class="snap">'+snapHtml+'</div>':'')+'</div>'+
+          '<div class="section"><h2>Why it matters</h2><div class="card">'+esc(why)+'</div></div>'+
           '<div class="section"><h2>What to do</h2><div class="card"><ol class="steps">'+steps.map(function(s){return '<li><span>'+esc(s)+'</span></li>'}).join('')+'</ol>'+
-            (fx.example?'<div class="sub" style="margin-top:14px">Example</div><pre class="mono">'+esc(fx.example)+'</pre>':'')+
-            (fx.verify?'<p class="sub" style="margin-bottom:0">How to check: '+esc(fx.verify)+'</p>':'')+
-            '<div class="actions"><button class="btn primary" id="fixbtn">Suggest a fix for me</button><a class="btn" href="/findings">Back to findings</a></div><div id="fixout"></div></div></div>'+
-          ((fx.frameworks&&fx.frameworks.length)?'<div class="section"><h2>Related standards</h2><div class="card">'+fx.frameworks.map(function(f){return '<span class="chip plain">'+esc(f)+'</span>'}).join('')+'</div></div>':'')+
-          '<details class="section"><summary>Technical details</summary><div class="card" style="margin-top:10px"><div class="mono sub">Rule: '+esc(a.rule_id)+'<br>Found by: '+esc(a.source)+'<br>Scan: '+esc(a.scan_id)+'<br>Item: '+esc(a.id)+'<br>Scanned: '+esc(when(a.scanned_at))+'<br>Repository: '+esc(a.repository||'')+'</div></div></details>';
+            '<div class="actions"><button class="btn primary" id="fixbtn">Suggest a fix for me</button><a class="btn" href="/findings">Back to findings</a></div><div id="fixout"></div></div></div>';
         document.getElementById('fixbtn').onclick=function(){
           var b=this; b.disabled=true; b.textContent='Preparing\u2026';
           api('/findings/'+encodeURIComponent(id)+'/suggest-fix',{method:'POST',body:'{}'}).then(function(r){
             var t=r.content||r.suggestion||r.fix||r.summary||r.remediation||r;
             if(typeof t!=='string') t=JSON.stringify(t,null,2);
-            document.getElementById('fixout').innerHTML='<pre class="mono">'+esc(t)+'</pre>'; b.style.display='none';
+            document.getElementById('fixout').innerHTML='<div class="card" style="margin-top:12px;white-space:pre-wrap">'+esc(t)+'</div>'; b.style.display='none';
           }).catch(function(e){ document.getElementById('fixout').innerHTML='<div class="err" style="margin-top:12px">'+esc(e.message)+'</div>'; b.disabled=false; b.textContent='Try again'; });
         };
       });
     });
   }
-
   function scanPage(){
     document.getElementById('crumb').textContent='Scan report';
     return Promise.all([api('/scans/'+encodeURIComponent(id)),api('/scans/'+encodeURIComponent(id)+'/ci-gate').catch(function(){return null})]).then(function(rs){
@@ -219,5 +233,6 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--muted)}
   (page==='findings'?findingPage():scanPage()).catch(function(e){ root.innerHTML='<div class="err"><b>We could not open this page.</b><br>'+esc(e.message)+'<br><br><a class="btn" href="/findings">Back to findings</a></div>'; });
 })();
 </script>
+<script src="/_next/static/cgp-topbar.js" defer></script>
 </body>
 </html>

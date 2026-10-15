@@ -17,6 +17,8 @@ WORK_DIR = os.path.join(db.DATA_DIR, "work")
 CANCELLED = set()
 _slots = threading.Semaphore(int(os.getenv("MAX_CONCURRENT_SCANS", "2")))
 STAGES = ["fetch", "inventory", "controls", "graph", "persist"]
+# only personal (PII) and health (PHI) data is listed as findings; other detections stay evidence for the ten checks. Set LIST_ONLY_PII_PHI=false to list everything.
+ONLY_PII_PHI = os.getenv("LIST_ONLY_PII_PHI", "true").lower() in ("1", "true", "yes")
 MAX_ZIP_FILES = 20000
 MAX_ZIP_BYTES = 300 * 1024 * 1024
 
@@ -182,7 +184,7 @@ def _run(tenant, scan_id, git_url, zip_bytes):
 
             for f in result["findings"]:
                 # personal/health findings are the issues people review; everything else is evidence for the ten checks only
-                db.put("findings" if f["category"] == "pii" else "findings_evidence", tenant, f["id"], f)
+                db.put("findings" if (f["category"] == "pii" or not ONLY_PII_PHI) else "findings_evidence", tenant, f["id"], f)
             db.put("graphs", tenant, scan_id, graph)
             db.put(
                 "inventory", tenant, scan_id,
@@ -193,7 +195,7 @@ def _run(tenant, scan_id, git_url, zip_bytes):
                     "blueprint": result["blueprint"], "files_scanned": result["files_scanned"], "file_list": result["file_list"], "routes": result["routes"],
                 },
             )
-            visible = [f for f in result["findings"] if f["category"] == "pii"]
+            visible = [f for f in result["findings"] if f["category"] == "pii" or not ONLY_PII_PHI]
             sev = Counter(f["severity"] for f in visible)
             cat = Counter(f["category"] for f in visible)
             doc["controls"] = controls

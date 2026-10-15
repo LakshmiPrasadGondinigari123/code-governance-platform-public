@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code-to-Governance Intelligence Platform</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#0a0f18;--panel:#0f1623;--card:#131c2b;--line:#222e42;--text:#e8edf5;--muted:#93a0b4;--accent:#ff5a1f}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.55 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.app{display:flex;min-height:100vh}
+.side{width:248px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:16px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:10px;align-items:center;margin:2px 6px 18px}.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;font-weight:800}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em}
+.sec{font-size:10px;letter-spacing:.14em;color:var(--muted);margin:16px 8px 6px}
+.nav a{display:block;padding:8px 10px;border-radius:8px;color:#c4cddb;font-size:14px}.nav a:hover{background:#18233a}.nav a.on{background:#2a1a14;color:#fff}
+.main{flex:1;min-width:0}
+.top{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 24px;background:var(--panel);position:sticky;top:0;z-index:5}
+.pill{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-weight:700}.live{color:#4ade80;border-color:#14532d}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 70px}
+h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:26px 0 10px}.sub{color:var(--muted)}
+.kpis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin:22px 0}
+.kpi{border-radius:18px;padding:18px 20px;color:#fff;position:relative;overflow:hidden;border:2px solid transparent;cursor:pointer;transition:transform .15s}
+.kpi:hover{transform:translateY(-2px)}.kpi.on{border-color:#fff}
+.kpi:after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.14)}
+.kpi .l{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.kpi .n{font-size:40px;font-weight:800;line-height:1.15}.kpi .d{font-size:12.5px;opacity:.92;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k1{background:linear-gradient(135deg,#6366f1,#4338ca)}.k2{background:linear-gradient(135deg,#14b8a6,#0f766e)}.k3{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}.k4{background:linear-gradient(135deg,#f59e0b,#c2410c)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.filters input,.filters select{background:#0d1522;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit}
+.filters input{flex:1;min-width:220px}
+.tbl{background:#fff;color:#0f172a;border-radius:14px;overflow-x:auto;box-shadow:0 1px 3px rgba(0,0,0,.3);margin-top:14px}
+.tbl table{width:100%;border-collapse:collapse;min-width:820px}
+.tbl th{background:#0f4c6b;color:#fff;text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:12px 14px;white-space:nowrap}
+.tbl td{padding:12px 14px;border-top:1px solid #e2e8f0;vertical-align:middle;font-size:13.5px}
+.tbl tr.tr{cursor:pointer}.tbl tr.tr:hover td{background:#eef2ff}.tbl tr.tr.sel td{background:#e0e7ff}
+.tbl .sm{font-size:12px;color:#64748b}
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:800;white-space:nowrap;margin:2px 4px 2px 0}
+.c-ai{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}.c-m{background:#ccfbf1;color:#115e59;border:1px solid #5eead4}
+.s-attention{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}.s-review{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}.s-clear{background:#dcfce7;color:#166534;border:1px solid #86efac}.s-none{background:#e2e8f0;color:#334155}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+.head2{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+.head2 h3{margin:0;font-size:22px}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:9px;padding:8px 14px;background:transparent;color:var(--text);cursor:pointer;font-size:13px;font-weight:600}.btn:hover{border-color:var(--accent)}
+.tiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin:16px 0}
+.tile{border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;gap:14px;align-items:center}
+.tile .n{font-size:26px;font-weight:800;line-height:1.1}.tile .l{color:var(--muted);font-size:12.5px}
+.ring{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;flex:none}.ring div{width:48px;height:48px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-weight:800;font-size:14px}
+.list .it{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}.list .it:first-child{border-top:0}
+.tag{flex:none;font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 11px;margin-top:2px}
+.t-fail{background:#fee2e2;color:#991b1b}.t-review{background:#fef3c7;color:#92400e}
+.chips span{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 12px;margin:3px 6px 3px 0;font-size:12.5px}
+.grid2{display:grid;gap:18px;grid-template-columns:1fr 1fr}@media(max-width:900px){.grid2{grid-template-columns:1fr}.side{display:none}}
+.note{font-size:12.5px;color:var(--muted);margin-top:8px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.pillb{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s}
+.pillb:hover{border-color:var(--accent)}.pillb.on{background:var(--accent);border-color:var(--accent);color:#fff}.pillb b{background:rgba(255,255,255,.2);border-radius:999px;padding:0 8px;font-size:12px}
+.dotc{display:inline-block;width:9px;height:9px;border-radius:50%;background:#94a3b8}.dotc.s-attention{background:#ef4444}.dotc.s-review{background:#f59e0b}.dotc.s-clear{background:#22c55e}
+.card{padding:0;overflow:hidden}.card>.head2{padding:22px 24px;background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(20,184,166,.14));border-bottom:1px solid var(--line)}
+.card>.tiles,.card>.grid2,.card>h2,.card>.list,.card>.sub{margin-left:24px;margin-right:24px}.card>.grid2{margin-bottom:22px}.card>.list{margin-bottom:22px}
+.tile{background:rgba(148,163,184,.07)}
+.list .it{border-left:4px solid transparent;padding-left:12px;margin-bottom:8px;border-top:0;background:rgba(148,163,184,.07);border-radius:10px}
+html.light .card>.head2{background:linear-gradient(135deg,#eef2ff,#f0fdfa)}
+.tbl tr.tr.sel td:first-child{box-shadow:inset 4px 0 0 var(--accent)}.card.inv{padding:0;overflow:hidden;border-radius:20px}
+.inv .hero{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:24px 26px;background:linear-gradient(120deg,#4338ca,#7c3aed 55%,#0f766e);color:#fff}
+.inv .hero h3{margin:0;font-size:24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}.inv .hero .sub,.inv .hero .note{color:rgba(255,255,255,.85)}
+.inv .hero-l{display:flex;gap:16px;align-items:flex-start}.inv .avatar{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-weight:800;font-size:18px;flex:none}
+.inv .hero-r{display:flex;gap:10px;align-items:flex-start}.inv .hero .btn{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);color:#fff}.inv .hero .btn:hover{background:rgba(255,255,255,.26)}
+.inv .score{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:14px;padding:20px 26px;border-bottom:1px solid var(--line)}
+.inv .score-ring{display:flex;gap:16px;align-items:center}
+.inv .ring.big{width:84px;height:84px}.inv .ring.big div{width:64px;height:64px;font-size:20px}.inv .ring.big small{font-size:12px;opacity:.6}
+.inv .stat{border:1px solid var(--line);border-radius:14px;padding:12px 16px}.inv .stat.warn{border-color:#f59e0b66;background:rgba(245,158,11,.08)}
+.inv .n{font-size:28px;font-weight:800;line-height:1.1}.inv .l{color:var(--muted);font-size:12.5px}
+.inv .cols{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;padding:6px 26px 26px}
+.inv h2{margin:22px 0 10px}
+.inv .issue{border:1px solid var(--line);border-left:5px solid #ef4444;border-radius:12px;padding:12px 14px;margin-bottom:10px;background:rgba(148,163,184,.06)}
+.inv .issue.rev{border-left-color:#f59e0b}
+.inv code{display:inline-block;font:12px ui-monospace,Consolas,monospace;border:1px solid var(--line);border-radius:6px;padding:1px 7px;margin:6px 6px 0 0}
+.inv .policy{border:1px dashed #f59e0b;border-radius:14px;padding:14px 16px;background:rgba(245,158,11,.08);margin-top:12px}
+.inv .policy .btn{margin-top:10px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.inv .okbox{border:1px solid #86efac;background:rgba(34,197,94,.1);border-radius:12px;padding:14px;color:#16a34a;font-weight:600}
+.inv .model{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.inv .mav{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#14b8a6);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.inv .cap{display:inline-block;background:rgba(99,102,241,.14);color:inherit;border-radius:999px;padding:4px 12px;margin:3px 6px 3px 0;font-size:12.5px}
+.inv .chips span.lg{border-style:dashed}.inv .chips span.ext{border-color:#f43f5e66;background:rgba(244,63,94,.08)}
+@media(max-width:900px){.inv .score{grid-template-columns:1fr 1fr}.inv .cols{grid-template-columns:1fr}}.agentbox{display:flex;gap:14px;align-items:flex-start;margin:0 26px;margin-top:18px;padding:14px 16px;border-radius:14px;border:1px solid #c7d2fe;background:linear-gradient(135deg,rgba(99,102,241,.14),rgba(20,184,166,.10))}
+.agentbox .ag-i{font-size:26px;color:#6366f1}.agsteps{margin:8px 0 0 18px;padding:0}.agsteps li{margin:3px 0}
+.inv .mnote{font-size:12.5px;margin-top:3px;opacity:.85}.err{background:#2a0f12;border:1px solid #7f1d1d;border-radius:10px;padding:14px;color:#fecaca}
+.themebtn{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-left:auto}
+html.light{--bg:#f6f8fb;--panel:#fff;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b}
+html.light .side{--panel:#0f1623;--line:#222e42;--text:#e8edf5;--muted:#93a0b4;color:#e8edf5}
+html.light select,html.light input,html.light .filters input,html.light .filters select{background:#fff;color:#0f172a;border-color:#cbd5e1}
+html.light .btn{color:#0f172a;border-color:#cbd5e1}
+html.dark .tbl{background:#131c2b;color:#e8edf5;box-shadow:none;border:1px solid #222e42}
+html.dark .tbl td{border-top-color:#222e42}html.dark .tbl tr.tr:hover td{background:#18233a}html.dark .tbl tr.tr.sel td{background:#1e2a44}html.dark .tbl .sm{color:#93a0b4}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  function dark(){ var t=null; try{t=localStorage.getItem('theme')}catch(e){} if(t==='dark') return true; if(t==='light') return false; return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches); }
+  function apply(){ var d=dark(), h=document.documentElement; h.classList.toggle('dark',d); h.classList.toggle('light',!d); var b=document.getElementById('themeBtn'); if(b) b.textContent=d?'☀ Light':'☾ Dark'; }
+  apply();
+  window.addEventListener('storage',function(e){ if(!e.key||e.key==='theme') apply(); });
+  })();
+</script>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">&#9919;</div><div><small>EXL</small><b>Code-Governance</b></div></div>
+    <div class="sec">GOVERNANCE</div>
+    <nav class="nav"><a href="/overview">Dashboard</a><a href="/architecture">Architecture</a><a href="/findings">Findings</a><a href="/ai-inventory" class="on">AI Inventory</a><a href="/repositories">Repositories &amp; Scans</a></nav>
+    <div class="sec">ADVANCED</div>
+    <nav class="nav"><a href="/controls">Governance Controls</a><a href="/dependencies">Dependencies / SBOM</a><a href="/reviews">Review Requests</a><a href="/evidence-packs">Governance Report</a><a href="/evidence-graph">Evidence Graph</a><a href="/ci-cd">Scan Monitoring</a><a href="/runtime">AI Usage</a><a href="/settings">Settings</a><a href="/audit-log">Audit Log</a><a href="/system-health">System Health</a><a href="/administration">Administration</a></nav>
+  </aside>
+  <div class="main">
+    <div class="top"><b>AI Inventory</b><span style="flex:1"></span><span class="pill live">&#9679; LIVE</span></div>
+    <div class="wrap">
+      <h1>AI Inventory</h1>
+      <div class="sub">Which of your repositories use AI, what they use, and what needs attention. Click a row for its full card.</div>
+      <div class="kpis" id="kpis"></div>
+      <div class="filters">
+        <select id="fRepo" title="Repository"><option value="">All repositories</option></select>
+        <input id="q" placeholder="Search repository, AI provider or model">
+        <select id="fKind"><option value="">All kinds</option><option value="ai">Uses AI</option><option value="none">No AI detected</option></select>
+        <select id="fStat"><option value="">Any status</option><option value="attention">Needs fixing</option><option value="review">Needs review</option><option value="clear">All clear</option></select>
+      </div>
+      <div id="table"><div class="sub" style="margin-top:16px">Loading&hellip;</div></div>
+      <div id="card"></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var TOKEN=null; try{TOKEN=localStorage.getItem('cgp_token')}catch(e){}
+  if(!TOKEN){ location.href='/login'; return; }
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  function api(p){ return fetch(p,{headers:{Authorization:'Bearer '+TOKEN}}).then(function(r){
+    if(r.status===401){ try{localStorage.removeItem('cgp_token')}catch(e){} location.href='/login'; throw new Error('Your session ended.'); }
+    if(!r.ok) throw new Error(p+' ('+r.status+')'); return r.json(); }); }
+  function ago(t){ if(!t) return 'never'; var s=(Date.now()-new Date(t).getTime())/1000; if(s<90) return 'just now'; if(s<3600) return Math.round(s/60)+' min ago'; if(s<86400) return Math.round(s/3600)+' h ago'; return Math.round(s/86400)+' days ago'; }
+  var ITEMS=[], SEL=null, KPI='', SCOPE='';
+  function nice(p){ return String(p).replace(/\s*\(.*?\)\s*/g,'').trim(); }
+  function chips(arr,cls,max){ arr=arr||[]; var h=arr.slice(0,max).map(function(x){return '<span class="chip '+cls+'">'+esc(x)+'</span>'}).join(''); if(arr.length>max) h+='<span class="sm">+'+(arr.length-max)+' more</span>'; return h||'<span class="sm">—</span>'; }
+  function status(i){ if(i.kind==='unscanned') return ['Not scanned','s-none']; if(i.level==='attention') return ['Needs fixing','s-attention']; if(i.level==='review') return ['Needs review','s-review']; return ['All clear','s-clear']; }
+  function modelNames(i){ return (i.models||[]).map(function(m){return m.model}).filter(Boolean).filter(function(v,k,s){return s.indexOf(v)===k}); }
+  function visible(){
+    var q=document.getElementById('q').value.trim().toLowerCase(), k=document.getElementById('fKind').value, st=document.getElementById('fStat').value;
+    return ITEMS.filter(function(i){
+      if(SCOPE && i.repository_id!==SCOPE) return false;
+      if(k==='ai' && i.kind!=='ai') return false;
+      if(k==='none' && i.kind==='ai') return false;
+      if(st && i.level!==st) return false;
+      if(KPI==='attention' && !(i.level==='attention'||i.level==='review')) return false;
+      if(q && (i.name+' '+(i.providers||[]).join(' ')+' '+modelNames(i).join(' ')).toLowerCase().indexOf(q)<0) return false;
+      return true; });
+  }
+  function kpis(){
+    var pool=SCOPE?ITEMS.filter(function(i){return i.repository_id===SCOPE}):ITEMS, one=!!SCOPE;
+    var ai=pool.filter(function(i){return i.kind==='ai'}), models={}, prov={};
+    ai.forEach(function(i){ modelNames(i).forEach(function(m){models[m]=1}); (i.providers||[]).forEach(function(p){prov[nice(p)]=1}); });
+    var att=pool.filter(function(i){return (i.level==='attention'||i.level==='review') && (i.kind==='ai'||i.kind==='artifacts')});
+    var acts=pool.reduce(function(a,i){return a+(i.failing||0)+(i.review||0)},0);
+    var cards=one?[
+      ['k1','AI system',ai.length?'Yes':'No',ai.length?'This repository uses AI':'No AI detected here',''],
+      ['k2','Models in use',Object.keys(models).length,Object.keys(models).slice(0,3).join(', ')||'None',''],
+      ['k3','AI providers',Object.keys(prov).length,Object.keys(prov).slice(0,4).join(', ')||'None',''],
+      ['k4','Checks to act on',acts,pool[0]?((pool[0].failing||0)+' to fix \u00B7 '+(pool[0].review||0)+' to review'):'','']]
+     :[['k1','AI systems',ai.length,ai.map(function(i){return i.name}).join(', ')||'No AI detected yet',''],
+      ['k2','Models in use',Object.keys(models).length,Object.keys(models).slice(0,3).join(', ')||'None',''],
+      ['k3','AI providers',Object.keys(prov).length,Object.keys(prov).slice(0,4).join(', ')||'None',''],
+      ['k4','Need attention',att.length,att.length?'Repositories to look at first':'Everything looks fine','attention']];
+    document.getElementById('kpis').innerHTML=cards.map(function(c){return '<div class="kpi '+c[0]+(KPI===c[4]&&c[4]?' on':'')+'" data-k="'+c[4]+'"><div class="l">'+c[1]+'</div><div class="n">'+c[2]+'</div><div class="d">'+esc(c[3])+'</div></div>'}).join('');
+    document.querySelectorAll('.kpi').forEach(function(el){ el.onclick=function(){ var k=el.getAttribute('data-k'); if(!k) return; KPI=(KPI===k)?'':k; draw(); }; });
+    var sel=document.getElementById('fRepo');
+    if(sel){
+      var cur=SCOPE, opts='<option value="">All repositories ('+ITEMS.length+')</option>'+ITEMS.map(function(i){var st=status(i); return '<option value="'+esc(i.repository_id)+'">'+esc(i.name)+' \u2014 '+st[0]+'</option>'}).join('');
+      if(sel.getAttribute('data-sig')!==opts){ sel.innerHTML=opts; sel.setAttribute('data-sig',opts); }
+      sel.value=cur;
+      sel.onchange=function(){ SCOPE=sel.value||''; KPI=''; SEL=SCOPE||firstAi(); if(window.cgpSetScope) window.cgpSetScope(SCOPE,true); draw(); if(SEL) loadCard(SEL); else document.getElementById('card').innerHTML=''; };
+    }
+  }  function firstAi(){ var f=ITEMS.filter(function(i){return i.kind==='ai'})[0]; return f?f.repository_id:null; }  function draw(){
+    kpis();
+    var rows=visible();
+    document.getElementById('table').innerHTML=rows.length?'<div class="tbl"><table><thead><tr><th>Repository</th><th>AI used</th><th>Models</th><th>Status</th><th>Checks</th><th>Scanned</th></tr></thead><tbody>'+
+      rows.map(function(i){var st=status(i);
+        return '<tr class="tr'+(SEL===i.repository_id?' sel':'')+'" data-id="'+esc(i.repository_id)+'"><td><b>'+esc(i.name)+'</b><div class="sm">'+(i.kind==='ai'?'AI system':(i.kind==='artifacts'?'AI-related files only':'No AI detected'))+'</div></td>'+
+          '<td>'+chips((i.providers||[]).map(nice),'c-ai',3)+'</td><td>'+chips(modelNames(i),'c-m',2)+'</td>'+
+          '<td><span class="chip '+st[1]+'">'+st[0]+'</span></td>'+
+          '<td>'+(i.kind==='unscanned'?'<span class="sm">—</span>':'<span class="sm">'+i.failing+' to fix · '+i.review+' to review</span>')+'</td>'+
+          '<td class="sm">'+esc(ago(i.scanned_at))+'</td></tr>';}).join('')+'</tbody></table></div>':'<div class="sub" style="margin-top:16px">Nothing matches these filters.</div>';
+    document.querySelectorAll('tr.tr').forEach(function(r){ r.onclick=function(){ SCOPE=r.getAttribute('data-id'); SEL=SCOPE; KPI=''; if(window.cgpSetScope) window.cgpSetScope(SCOPE,true); draw(); loadCard(SEL); }; });
+  }
+  var DL='';
+  function loadCard(id){
+    var el=document.getElementById('card'); el.innerHTML='<div class="card sub">Loading the full card…</div>';
+    api('/ai-inventory/model-card?repository_id='+encodeURIComponent(id)).then(function(d){
+      if(d.status!=='ok'){ el.innerHTML='<div class="card"><b>'+esc(d.repository.name)+'</b><div class="sub">This repository has not completed a scan yet.</div></div>'; return; }
+      DL=d.markdown||'';
+      var ctr=d.controls||[], met=ctr.filter(function(c){return c.status==='PASS'}).length, tot=ctr.length||10, pct=Math.round(met*100/tot);
+      var col=pct>=80?'#16a34a':(pct>=50?'#f59e0b':'#ef4444');
+      var models=(d.models||[]), app=d.application||{}, ai=d.ai||{}, ext=(app.external_services||[]), dt=d.data||{};
+      var providers=(ai.providers||[]).map(function(p){return nice(p.name)});
+      var pat=ai.patterns||{}, can=[];
+      if(pat.prompts) can.push('Sends written instructions to an AI model');
+      if(pat.rag) can.push('Looks up documents before answering');
+      if(pat.tools) can.push('Can call tools or other systems');
+      if(pat.agents) can.push('Can act on its own in several steps');      var PRETTY={fastapi:'FastAPI',react:'React',sqlalchemy:'SQLAlchemy',redis:'Redis',chromadb:'Chroma',chroma:'Chroma',langchain:'LangChain',postgresql:'PostgreSQL',psycopg2:'PostgreSQL',pymongo:'MongoDB',flask:'Flask',django:'Django',next:'Next.js',streamlit:'Streamlit',pinecone:'Pinecone','pineconeclient':'Pinecone',sqlite3:'SQLite',mysqlclient:'MySQL','springboot':'Spring Boot',express:'Express'};
+      function pretty(n){ var k=String(n).toLowerCase().replace(/langchain.*/,'langchain').replace(/[^a-z0-9]/g,''); return PRETTY[k]||(k==='langchain'?'LangChain':String(n).replace(/\s*\(.*?\)\s*/g,'').replace(/^./,function(c){return c.toUpperCase()})); }
+      function uniq(arr){ var s={},o=[]; arr.forEach(function(x){ var k=pretty(x).toLowerCase(); if(!s[k]){ s[k]=1; o.push(pretty(x)); } }); return o; }
+      var LANG={py:'Python',python:'Python',js:'JavaScript',jsx:'JavaScript',javascript:'JavaScript',ts:'TypeScript',tsx:'TypeScript',typescript:'TypeScript',java:'Java',go:'Go',rb:'Ruby',rs:'Rust',php:'PHP',cs:'C#',kt:'Kotlin',swift:'Swift',sql:'SQL',html:'HTML',css:'CSS',sh:'Shell',tf:'Terraform',terraform:'Terraform'};
+      var langs=[]; (app.languages||[]).forEach(function(l){ var n=LANG[String(l.name).toLowerCase().replace(/^\./,'')]; if(n&&langs.indexOf(n)<0) langs.push(n); });
+      var frameworks=uniq([].concat(app.frameworks||[],(ai.frameworks||[]).map(function(x){return x.name}))), stores=uniq([].concat(app.databases||[],(ai.vector_stores||[]).map(function(x){return x.name})));
+      var isPolicy=function(c){ return c.status==='REVIEW' && (/approved|disclosure/i.test(c.name) || /no approved/i.test(c.detail||'')); };
+      var fix=ctr.filter(function(c){return c.status==='FAIL'});
+      var policy=ctr.filter(isPolicy);
+      var review=ctr.filter(function(c){return c.status==='REVIEW' && !isPolicy(c)});
+      function where(c){ var s={},o=[]; (c.evidence||[]).forEach(function(e){ var k=e.file+(e.line?':'+e.line:''); if(!s[k]){ s[k]=1; o.push(k); } }); return o.slice(0,3); }
+      var pol=policy.map(function(c){ return c.name.replace(/^(External AI|Approved)\s*/i,'').replace(/\s*(Use|Disclosure)$/i,'').trim()||c.name; });
+      var statusChip=met===tot?['All clear','s-clear']:(fix.length?['Needs fixing','s-attention']:['Needs review','s-review']);
+      var whatCan=can.length?can.map(function(c){return '<span class="cap">'+esc(c)+'</span>'}).join(''):'';
+      el.innerHTML=
+      '<div class="card inv">'+
+        '<div class="hero"><div class="hero-l"><div class="avatar">'+esc(String(d.repository.name).slice(0,2).toUpperCase())+'</div><div><h3>'+esc(d.repository.name)+' <span class="chip '+statusChip[1]+'">'+statusChip[0]+'</span></h3>'+
+          '<div class="sub" style="max-width:720px">'+esc(d.headline||'')+'</div>'+
+          '<div class="note">Scanned '+esc(ago(d.scan.scanned_at))+(d.scan.branch?' \u00B7 branch '+esc(d.scan.branch):'')+(d.scan.commit_sha?' \u00B7 commit '+esc(String(d.scan.commit_sha).slice(0,7)):'')+'</div></div></div>'+
+          '<div class="hero-r"><a class="btn" href="/scans/'+encodeURIComponent(d.scan.scan_id)+'">Full scan report</a><button class="btn" id="dl">Download card</button></div></div>'+
+        '<div class="score">'+
+          '<div class="score-ring"><div class="ring big" style="background:conic-gradient('+col+' '+pct+'%,rgba(148,163,184,.3) 0)"><div>'+met+'<small>/'+tot+'</small></div></div><div><div class="n">'+pct+'%</div><div class="l">of governance checks met</div></div></div>'+
+          '<div class="stat"><div class="n">'+providers.length+'</div><div class="l">AI providers</div></div>'+
+          '<div class="stat"><div class="n">'+models.filter(function(m){return m.model}).length+'</div><div class="l">Models in use</div></div>'+
+          '<div class="stat '+(((dt.pii||0)+(dt.secrets||0))?'warn':'')+'"><div class="n">'+((dt.pii||0)+(dt.secrets||0))+'</div><div class="l">Sensitive items in code</div></div>'+
+        '</div>'+
+        '<div class="agentbox" id="invAgent"><div class="ag-i">&#10022;</div><div style="flex:1"><b>AI inventory agent</b> <span class="sub" id="agSrc"></span><div id="agSum" class="sub">Reading this repository\u2019s scan and writing a summary\u2026</div><ol id="agSteps" class="agsteps"></ol></div><button class="btn" id="agRe">Refresh</button></div>'+
+        '<div class="cols">'+
+          '<div class="col"><h2>Needs fixing now</h2>'+(fix.length?fix.map(function(c){return '<div class="issue fail"><div class="ih"><b>'+esc(c.name)+'</b></div><div class="sub">'+esc(c.detail||'')+'</div><div>'+where(c).map(function(w){return '<code>'+esc(w)+'</code>'}).join('')+'</div></div>'}).join(''):'<div class="okbox">Nothing is failing. Well done.</div>')+
+            (review.length?'<h2>Worth a look</h2>'+review.map(function(c){return '<div class="issue rev"><div class="ih"><b>'+esc(c.name)+'</b></div><div class="sub">'+esc(c.detail||'')+'</div><div>'+where(c).map(function(w){return '<code>'+esc(w)+'</code>'}).join('')+'</div></div>'}).join(''):'')+
+            (policy.length?'<div class="policy"><div class="ph"><b>One setting clears '+policy.length+' review items</b></div><div class="sub">You have not defined approved lists yet, so these checks cannot be completed: '+esc(pol.join(', '))+'.</div><a class="btn primary" href="/runtime">Set approved lists</a></div>':'')+
+          '</div>'+
+          '<div class="col"><h2>AI it uses</h2>'+(models.length?models.map(function(m){return '<div class="model"><div class="mav">'+esc(nice(m.provider).slice(0,1))+'</div><div style="flex:1;min-width:0"><b>'+esc(m.model||'Model not named')+'</b><div class="sub">'+esc(nice(m.provider))+' \u00B7 '+esc((m.files||[])[0]||'')+'</div></div>'+(m.approval&&m.approval.status==='unapproved'?'<span class="tag t-fail">Not approved</span>':(m.approval&&m.approval.status==='approved'?'<span class="tag" style="background:#dcfce7;color:#166534">Approved</span>':''))+'</div>'}).join(''):'<div class="sub">No AI model is named here.</div>')+
+            (whatCan?'<h2>What it can do</h2><div>'+whatCan+'</div>':'')+
+            '<h2>Built with</h2><div class="chips">'+[].concat(frameworks,stores).filter(function(v,i,s){return s.indexOf(v)===i}).map(function(b){return '<span>'+esc(b)+'</span>'}).join('')+langs.map(function(l){return '<span class="lg">'+esc(l)+'</span>'}).join('')+'</div>'+
+            (ext.length?'<h2>Talks to outside services</h2><div class="chips">'+ext.slice(0,6).map(function(h){return '<span class="ext">'+esc(h)+'</span>'}).join('')+'</div>':'')+
+          '</div>'+
+        '</div>'+
+      '</div>';      (function(){
+        var repoId=d.repository.repository_id;
+        function runAgent(refresh){
+          var sum=document.getElementById('agSum'), steps=document.getElementById('agSteps'), src=document.getElementById('agSrc');
+          if(!sum) return;
+          if(refresh) sum.textContent='Writing a fresh summary\u2026';
+          api('/ai-inventory/agent?repository_id='+encodeURIComponent(repoId)+(refresh?'&refresh=true':'')).then(function(a){
+            if(!document.getElementById('agSum')) return;
+            sum.textContent=a.summary||''; src.textContent=a.source==='ai'?'\u00B7 written by AI from the scan':'\u00B7 written from the scan';
+            steps.innerHTML=(a.steps||[]).map(function(s){return '<li>'+esc(s)+'</li>'}).join('');
+            document.querySelectorAll('#card .model').forEach(function(m){ var b=m.querySelector('b'); var n=b&&a.models&&a.models[b.textContent]; if(n&&!m.querySelector('.mnote')){ var dv=document.createElement('div'); dv.className='mnote'; dv.textContent=n; b.parentNode.appendChild(dv); } });
+          }).catch(function(){ sum.textContent='The summary could not be written right now.'; });
+        }
+        runAgent(false);
+        var re=document.getElementById('agRe'); if(re) re.onclick=function(){ runAgent(true); };
+      })();      var dl=document.getElementById('dl'); if(dl) dl.onclick=function(){ var b=new Blob([DL],{type:'text/markdown'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='ai-card-'+String(d.repository.name).replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.md'; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000); };
+      el.scrollIntoView({behavior:'smooth',block:'start'});
+    }).catch(function(e){ el.innerHTML='<div class="err">'+esc(e.message)+'</div>'; });
+  }
+  function liveRefresh(fn){
+    var timer=null;
+    function go(){ clearTimeout(timer); timer=setTimeout(function(){ try{fn()}catch(e){} },500); }
+    try{
+      var es=new EventSource('/findings/events?token='+encodeURIComponent(TOKEN));
+      es.onmessage=function(e){ try{ var d=JSON.parse(e.data); if(d&&d.type&&d.type!=='connected') go(); }catch(_){} };
+    }catch(_){}
+    setInterval(function(){ if(!document.hidden){ try{fn()}catch(e){} } },45000);
+  }  function sortItems(a){ return (a||[]).sort(function(x,y){var o={ai:0,artifacts:1,none:2,unscanned:3}; return (o[x.kind]-o[y.kind])||((y.failing||0)-(x.failing||0));}); }
+  function refresh(){ return api('/ai-inventory').then(function(d){ ITEMS=sortItems(d.items); if(SCOPE && !ITEMS.some(function(i){return i.repository_id===SCOPE})){ SCOPE=''; SEL=null; } if(!SEL||!ITEMS.some(function(i){return i.repository_id===SEL})) SEL=SCOPE||firstAi(); draw(); if(SEL) loadCard(SEL); else document.getElementById('card').innerHTML=''; }); }
+  liveRefresh(function(){ refresh().catch(function(){}); });
+  window.addEventListener('cgp-repo',function(e){ SCOPE=e.detail||''; KPI=''; SEL=SCOPE||firstAi(); draw(); if(SEL) loadCard(SEL); else document.getElementById('card').innerHTML=''; });
+  ['fKind','fStat'].forEach(function(id){document.getElementById(id).onchange=draw});
+  document.getElementById('q').oninput=draw;
+  api('/ai-inventory').then(function(d){
+    ITEMS=(d.items||[]).sort(function(a,b){var o={ai:0,artifacts:1,none:2,unscanned:3}; return (o[a.kind]-o[b.kind])||((b.failing||0)-(a.failing||0));});
+    draw();
+    var qs=(location.search.match(/[?&]repo=([^&]+)/)||[])[1]||(window.cgpScope&&window.cgpScope())||''; if(qs){ qs=decodeURIComponent(qs); if(ITEMS.some(function(i){return i.repository_id===qs})){ SCOPE=qs; SEL=qs; draw(); loadCard(SEL); return; } }
+    var first=firstAi(); if(first){ SEL=first; draw(); loadCard(SEL); }
+  }).catch(function(e){ document.getElementById('table').innerHTML='<div class="err" style="margin-top:16px">'+esc(e.message)+'</div>'; });
+})();
+</script>
+<script src="/_next/static/cgp-topbar.js" defer></script>
+</body>
+</html>

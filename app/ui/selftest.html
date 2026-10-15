@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" class="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code-to-Governance Intelligence Platform</title><link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#0a0f18;--card:#131c2b;--line:#222e42;--text:#e8edf5;--muted:#93a0b4}
+html.light{--bg:#f6f8fb;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:34px 22px}h1{margin:0 0 4px}.sub{color:var(--muted)}
+.sum{display:flex;gap:12px;margin:20px 0;flex-wrap:wrap}.box{border-radius:14px;padding:14px 20px;color:#fff;min-width:150px}.ok{background:linear-gradient(135deg,#16a34a,#166534)}.bad{background:linear-gradient(135deg,#ef4444,#991b1b)}.gr{background:linear-gradient(135deg,#475569,#1e293b)}
+.box b{font-size:30px;display:block;line-height:1.1}
+.row{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;align-items:flex-start}
+.tag{flex:none;font-weight:800;font-size:12px;border-radius:999px;padding:3px 11px;margin-top:2px}.t-ok{background:#dcfce7;color:#166534}.t-bad{background:#fee2e2;color:#991b1b}
+.btn{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:600}a{color:inherit}
+</style></head><body><div class="wrap">
+<a href="/system-health" class="sub">&larr; System health</a>
+<h1>Platform self-test</h1><div class="sub">Checks that the numbers on every tab agree with each other and with the stored scans. Nothing is changed.</div>
+<div style="margin:16px 0"><button class="btn" id="run">Run again</button></div>
+<div id="out" class="sub">Running&hellip;</div></div>
+<script>
+(function(){
+  var TOKEN=null; try{TOKEN=localStorage.getItem('cgp_token')}catch(e){} if(!TOKEN){ location.href='/login'; return; }
+  var t=null; try{t=localStorage.getItem('theme')}catch(e){} var dark=t==='dark'||((!t||t==='system')&&matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.className=dark?'dark':'light';
+  var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  function run(){
+    var out=document.getElementById('out'); out.textContent='Running\u2026';
+    fetch('/system/selftest',{headers:{Authorization:'Bearer '+TOKEN}}).then(function(r){ if(r.status===401){ location.href='/login'; throw 0; } if(r.status===403) throw new Error('Only an administrator can run the self-test.'); if(!r.ok) throw new Error('The self-test could not run ('+r.status+').'); return r.json(); }).then(function(d){
+      out.innerHTML='<div class="sum"><div class="box '+(d.failed?'bad':'ok')+'"><b>'+(d.failed?d.failed+' failed':'All passed')+'</b>'+d.passed+' of '+d.total+' checks</div><div class="box gr"><b>'+d.seconds+'s</b>run time</div></div>'+
+        d.checks.map(function(c){return '<div class="row"><span class="tag '+(c.ok?'t-ok':'t-bad')+'">'+(c.ok?'PASS':'FAIL')+'</span><div><b>'+esc(c.name)+'</b><div class="sub">'+esc(c.detail)+'</div></div></div>'}).join('')+'<div class="sub" style="margin-top:12px">Run at '+esc(d.ran_at)+'</div>';
+    }).catch(function(e){ if(e) out.innerHTML='<div class="row"><span class="tag t-bad">ERROR</span><div>'+esc(e.message||e)+'</div></div>'; });
+  }
+  document.getElementById('run').onclick=run; run();
+})();
+</script></body></html>

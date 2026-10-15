@@ -62,14 +62,30 @@ td{padding:8px;border-top:1px solid #1b2639;vertical-align:middle}
 .err{background:#2a0f12;border:1px solid #7f1d1d;border-radius:10px;padding:14px;color:#fecaca}
 .empty{color:var(--muted);padding:14px 0}
 .small{font-size:12.5px;color:var(--muted)}
-</style>
+.themebtn{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-left:auto}
+html.light{--bg:#f6f8fb;--panel:#fff;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b}
+html.light .side{--panel:#0f1623;--line:#222e42;--text:#e8edf5;--muted:#93a0b4;color:#e8edf5}
+html.light select,html.light input,html.light .filters input,html.light .filters select{background:#fff;color:#0f172a;border-color:#cbd5e1}
+html.light .reset{color:#475569;border-color:#cbd5e1;background:#fff}
+html.light .sub{color:#64748b}html.light .btn,html.light .f{background:#fff;color:#0f172a;border-color:#cbd5e1}html.light .f.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+html.light .rank{background:#e2e8f0}html.light td,html.light .q,html.light .row{border-top-color:#e2e8f0}
+html.light .ev span{background:#f1f5f9;color:#334155;border-color:#e2e8f0}html.light .dot{border-color:rgba(0,0,0,.1)}
+html.light .c-bad{color:#991b1b}html.light .c-good{color:#166534}html.light .c-wait{color:#92400e}html.light .c-na{color:#334155}
+html.light .dom:hover{border-color:#94a3b8}html.light th.v{color:#475569}html.light .tag{color:#475569}</style>
 </head>
 <body>
-<div class="app">
+<script>
+(function(){
+  function dark(){ var t=null; try{t=localStorage.getItem('theme')}catch(e){} if(t==='dark') return true; if(t==='light') return false; return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches); }
+  function apply(){ var d=dark(), h=document.documentElement; h.classList.toggle('dark',d); h.classList.toggle('light',!d); var b=document.getElementById('themeBtn'); if(b) b.textContent=d?'\u2600 Light':'\u263E Dark'; }
+  apply();
+  window.addEventListener('storage',function(e){ if(!e.key||e.key==='theme') apply(); });
+  })();
+</script><div class="app">
   <aside class="side">
     <div class="brand"><div class="logo">&#9919;</div><div><small>EXL</small><b>Code-Governance</b></div></div>
     <div class="sec">GOVERNANCE</div>
-    <nav class="nav"><a href="/overview">Dashboard</a><a href="/repositories">Repositories &amp; Scans</a><a href="/architecture">Architecture</a><a href="/findings">Findings</a><a href="/ai-inventory">AI Inventory</a></nav>
+    <nav class="nav"><a href="/overview">Dashboard</a><a href="/architecture">Architecture</a><a href="/findings">Findings</a><a href="/ai-inventory">AI Inventory</a><a href="/repositories">Repositories &amp; Scans</a></nav>
     <div class="sec">ADVANCED</div>
     <nav class="nav"><a href="/controls" class="on">Governance Controls</a><a href="/dependencies">Dependencies / SBOM</a><a href="/reviews">Review Requests</a><a href="/evidence-packs">Governance Report</a><a href="/evidence-graph">Evidence Graph</a><a href="/ci-cd">Scan Monitoring</a><a href="/runtime">AI Usage</a><a href="/settings">Settings</a><a href="/audit-log">Audit Log</a><a href="/system-health">System Health</a><a href="/administration">Administration</a></nav>
   </aside>
@@ -227,18 +243,30 @@ td{padding:8px;border-top:1px solid #1b2639;vertical-align:middle}
   }
 
   function bind(){
-    var sel=document.getElementById('repoSel'); if(sel) sel.onchange=function(){ state.repo=sel.value||null; render(); };
+    var sel=document.getElementById('repoSel'); if(sel) sel.onchange=function(){ state.repo=sel.value||null; if(window.cgpSetScope) window.cgpSetScope(state.repo||'',true); render(); };
     [].forEach.call(document.querySelectorAll('[data-domain]'),function(el){ el.onclick=function(){ var d=el.getAttribute('data-domain'); state.domain=state.domain===d?null:d; render(); var t=document.querySelector('h2:nth-of-type(3)'); }; });
     [].forEach.call(document.querySelectorAll('[data-f]'),function(el){ el.onclick=function(){ var f=el.getAttribute('data-f'); if(f==='__clear'){ state.domain=null; } else state.filter=f; render(); }; });
-    [].forEach.call(document.querySelectorAll('.rp-sel'),function(el){ el.onclick=function(ev){ ev.preventDefault(); state.repo=el.getAttribute('data-repo'); render(); window.scrollTo({top:0,behavior:'smooth'}); }; });
+    [].forEach.call(document.querySelectorAll('.rp-sel'),function(el){ el.onclick=function(ev){ ev.preventDefault(); state.repo=el.getAttribute('data-repo'); if(window.cgpSetScope) window.cgpSetScope(state.repo||'',true); render(); window.scrollTo({top:0,behavior:'smooth'}); }; });
   }
 
   api('/health').then(function(){var e=document.getElementById('live');e.textContent='● LIVE';e.className='pill live'}).catch(function(){var e=document.getElementById('live');e.textContent='○ OFFLINE';e.className='pill off'});
-  Promise.all([api('/governance/controls'),api('/governance/check-coverage'),api('/governance/framework-map'),api('/repositories')]).then(function(r){
+  function liveRefresh(fn){
+    var timer=null;
+    function go(){ clearTimeout(timer); timer=setTimeout(function(){ try{fn()}catch(e){} },500); }
+    try{
+      var es=new EventSource('/findings/events?token='+encodeURIComponent(TOKEN));
+      es.onmessage=function(e){ try{ var d=JSON.parse(e.data); if(d&&d.type&&d.type!=='connected') go(); }catch(_){} };
+    }catch(_){}
+    setInterval(function(){ if(!document.hidden){ try{fn()}catch(e){} } },45000);
+  }  function loadAll(){ return Promise.all([api('/governance/controls'),api('/governance/check-coverage'),api('/governance/framework-map'),api('/repositories')]).then(function(r){
     D.controls=r[0].controls||[]; D.coverage=r[1]; D.framework=r[2]; D.repos=(r[3].items||[]); D.byRepo={};
     return Promise.all(D.repos.map(function(rp){ return api('/governance/controls?repository_id='+encodeURIComponent(rp.repository_id)).then(function(x){D.byRepo[rp.repository_id]=x.controls||[]}).catch(function(){D.byRepo[rp.repository_id]=[]}); }));
-  }).then(render).catch(function(e){ root.innerHTML='<div class="err"><b>The governance board could not be loaded.</b><br>'+esc(e.message)+'</div>'; });
+  }).then(function(){ var gs=(window.cgpScope&&window.cgpScope())||''; if(!state.repo && gs) state.repo=gs; if(state.repo && !D.repos.some(function(r){return r.repository_id===state.repo})) state.repo=null; render(); }); }
+  window.addEventListener('cgp-repo',function(e){ state.repo=e.detail||null; if(typeof D!=='undefined'&&D.repos) render(); });
+  loadAll().catch(function(e){ root.innerHTML='<div class="err"><b>The governance board could not be loaded.</b><br>'+esc(e.message)+'</div>'; });
+  liveRefresh(function(){ loadAll().catch(function(){}); });
 })();
 </script>
+<script src="/_next/static/cgp-topbar.js" defer></script>
 </body>
 </html>

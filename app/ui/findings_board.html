@@ -28,7 +28,7 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}.sub{color:var(--muted)}
 .k-all{background:linear-gradient(135deg,#475569,#1e293b)}.k-conf{background:linear-gradient(135deg,#ef4444,#9f1239)}.k-open{background:linear-gradient(135deg,#f59e0b,#c2410c)}.k-sup{background:linear-gradient(135deg,#14b8a6,#0f766e)}
 .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
 .filters input,.filters select{background:#0d1522;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;min-width:150px}
-.filters input{flex:1;min-width:220px}
+.filters input{flex:1;min-width:220px}#more select{min-width:190px}
 .reset{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 14px;cursor:pointer}
 .count{margin:16px 2px 10px;color:var(--muted);font-size:13px}
 .group{background:#fff;color:#0f172a;border-radius:14px;margin-bottom:10px;overflow:hidden;border-left:6px solid #94a3b8;box-shadow:0 1px 2px rgba(0,0,0,.25)}
@@ -55,7 +55,7 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}.sub{color:var(--muted)}
 .row.High{border-left-color:#dc2626}.row.Medium{border-left-color:#f59e0b}.row.Low{border-left-color:#64748b}
 .r1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.rt{font-size:15.5px}
 .r2{display:flex;gap:22px;flex-wrap:wrap;font-size:12.5px;color:#64748b;margin-top:5px}.r2 b{color:#334155;font-weight:600}
-.c-conf{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}.c-rev{background:#e0e7ff;color:#3730a3;border:1px solid #a5b4fc}
+.c-oth{background:#e0e7ff;color:#3730a3;border:1px solid #a5b4fc}.c-conf{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}.c-rev{background:#e0e7ff;color:#3730a3;border:1px solid #a5b4fc}
 .cl{font-size:11.5px;color:#64748b;font-weight:700}
 .pager{display:flex;gap:14px;align-items:center;justify-content:center;margin-top:16px}
 .pager .reset:disabled{opacity:.4;cursor:default}.tbl{background:#fff;color:#0f172a;border-radius:14px;overflow-x:auto;box-shadow:0 1px 3px rgba(0,0,0,.3)}
@@ -65,16 +65,32 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}.sub{color:var(--muted)}
 .tbl tr.tr{cursor:pointer;border-left:5px solid transparent}.tbl tr.tr:hover td{background:#f1f5f9}
 .tbl tr.tr:nth-child(even) td{background:#fafbfd}.tbl tr.tr:hover td{background:#eef2ff}
 .tbl .sm{font-size:12px;color:#64748b;margin-top:2px}.tbl .mono{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;color:#334155;word-break:break-all}
-.tbl .conf{min-width:130px}.err{background:#2a0f12;border:1px solid #7f1d1d;border-radius:10px;padding:14px;color:#fecaca}
+.tbl .conf{min-width:130px}.tbl td.issue{min-width:380px;max-width:520px;line-height:1.5}.tbl td.issue .sm{margin-top:4px}.tbl td.issue .mono{background:#f1f5f9;border-radius:5px;padding:0 5px}.err{background:#2a0f12;border:1px solid #7f1d1d;border-radius:10px;padding:14px;color:#fecaca}
 @media(max-width:1000px){.side{display:none}.conf{min-width:110px}}
-</style>
+.themebtn{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-left:auto}
+html.light{--bg:#f6f8fb;--panel:#fff;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b}
+html.light .side{--panel:#0f1623;--line:#222e42;--text:#e8edf5;--muted:#93a0b4;color:#e8edf5}
+html.light select,html.light input,html.light .filters input,html.light .filters select{background:#fff;color:#0f172a;border-color:#cbd5e1}
+html.light .reset{color:#475569;border-color:#cbd5e1;background:#fff}
+html.light .sub{color:#64748b}html.dark .tbl{background:#131c2b;color:#e8edf5;box-shadow:none;border:1px solid #222e42}
+html.dark .tbl td{border-top-color:#222e42}
+html.dark .tbl tr.tr:nth-child(even) td{background:#0f1826}html.dark .tbl tr.tr:hover td{background:#18233a}
+html.dark .tbl .sm{color:#93a0b4}html.dark .tbl .mono{color:#cbd5e1}html.dark .tbl td.issue .mono{background:#0d1522}
+html.dark .bar{background:#222e42}</style>
 </head>
 <body>
-<div class="app">
+<script>
+(function(){
+  function dark(){ var t=null; try{t=localStorage.getItem('theme')}catch(e){} if(t==='dark') return true; if(t==='light') return false; return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches); }
+  function apply(){ var d=dark(), h=document.documentElement; h.classList.toggle('dark',d); h.classList.toggle('light',!d); var b=document.getElementById('themeBtn'); if(b) b.textContent=d?'\u2600 Light':'\u263E Dark'; }
+  apply();
+  window.addEventListener('storage',function(e){ if(!e.key||e.key==='theme') apply(); });
+  })();
+</script><div class="app">
   <aside class="side">
     <div class="brand"><div class="logo">&#9919;</div><div><small>EXL</small><b>Code-Governance</b></div></div>
     <div class="sec">GOVERNANCE</div>
-    <nav class="nav"><a href="/overview">Dashboard</a><a href="/repositories">Repositories &amp; Scans</a><a href="/architecture">Architecture</a><a href="/findings" class="on">Findings</a><a href="/ai-inventory">AI Inventory</a></nav>
+    <nav class="nav"><a href="/overview">Dashboard</a><a href="/architecture">Architecture</a><a href="/findings" class="on">Findings</a><a href="/ai-inventory">AI Inventory</a><a href="/repositories">Repositories &amp; Scans</a></nav>
     <div class="sec">ADVANCED</div>
     <nav class="nav"><a href="/controls">Governance Controls</a><a href="/dependencies">Dependencies / SBOM</a><a href="/reviews">Review Requests</a><a href="/evidence-packs">Governance Report</a><a href="/evidence-graph">Evidence Graph</a><a href="/ci-cd">Scan Monitoring</a><a href="/runtime">AI Usage</a><a href="/settings">Settings</a><a href="/audit-log">Audit Log</a><a href="/system-health">System Health</a><a href="/administration">Administration</a></nav>
   </aside>
@@ -82,7 +98,7 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}.sub{color:var(--muted)}
     <div class="top"><b>Findings</b><span style="flex:1"></span><span class="pill live">&#9679; LIVE</span></div>
     <div class="wrap">
       <h1>Governance Findings</h1>
-      <div class="sub">Personal (PII) and health (PHI) data found in your repositories. Click any finding to see exactly where and why.</div>
+      <div class="sub">Personal data (PII) and health data (PHI) found in your repositories. Click any finding to see exactly where and why.</div>
       <div class="kpis" id="kpis"></div>
       <div class="filters">
         <input id="q" placeholder="Search data, file or repository">
@@ -90,7 +106,16 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}.sub{color:var(--muted)}
         <select id="fSev"><option value="">All severities</option><option>High</option><option>Medium</option><option>Low</option></select>
         <select id="fRepo"><option value="">All repositories</option></select>
         <select id="fStatus"><option value="">Any status</option><option value="open">Open</option><option value="confirmed">Confirmed</option><option value="suppressed">Suppressed</option></select>
-        <button class="reset" id="reset">Reset</button>
+        <button class="reset" id="moreBtn">More filters &#9662;</button><button class="reset" id="reset">Reset</button>
+        <div id="more" style="display:none;width:100%;gap:10px;flex-wrap:wrap">
+          <select id="fClass"><option value="">Any classification</option></select>
+          <select id="fGov"><option value="">Any governance result</option></select>
+          <select id="fEv"><option value="">Any evidence state</option></select>
+          <select id="fAi"><option value="">Any AI review</option></select>
+          <select id="fConf"><option value="">Any confidence</option><option value="high">High (85% and above)</option><option value="mid">Medium (65% to 84%)</option><option value="low">Low (below 65%)</option></select>
+          <select id="fDet"><option value="">Any detector</option></select>
+          <select id="fPer"><option value="25">25 per page</option><option value="50">50 per page</option><option value="100">100 per page</option></select>
+        </div>
       </div>
       <div class="count" id="count"></div>
       <div id="list"><div class="sub">Loading findings&hellip;</div></div>
@@ -112,24 +137,64 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}.sub{color:var(--muted)}
   function isConf(f){return String(f.classification||'').toUpperCase()==='CONFIRMED_SENSITIVE';}
   function repo(f){return f.repository_name||String(f.repository||f.repo_ref||'').split('/').pop()||'unknown';}
   function conf(f){var c=Number(f.governance_confidence); return isNaN(c)?null:Math.round(c*100);}
-  function pass(f){
+  function pass(f,skipStatus){
     var t=document.getElementById('fType').value, s=document.getElementById('fSev').value, r=document.getElementById('fRepo').value, st=document.getElementById('fStatus').value, q=document.getElementById('q').value.trim().toLowerCase();
     if(t && String(f.data_type||f.finding_type).toUpperCase()!==t) return false;
     if(s && sev(f)!==s) return false;
     if(r && f.repository_id!==r) return false;
-    if(st==='suppressed' && !isSup(f)) return false;
+    if(!skipStatus){ if(st==='suppressed' && !isSup(f)) return false;
     if(st==='open' && isSup(f)) return false;
-    if(st==='confirmed' && !isConf(f)) return false;
+    if(st==='confirmed' && !isConf(f)) return false; }
+    var cl=document.getElementById('fClass').value, gv=document.getElementById('fGov').value, ev=document.getElementById('fEv').value, ai=document.getElementById('fAi').value, cf=document.getElementById('fConf').value, dt=document.getElementById('fDet').value;
+    if(cl && String(f.classification||'')!==cl) return false;
+    if(gv && String(f.governance_status||'')!==gv) return false;
+    if(ev && String(f.evidence_state||'')!==ev) return false;
+    if(ai && String(f.ai_status||'')!==ai) return false;
+    if(dt && String(f.detected_by||f.source||'')!==dt) return false;
+    if(cf){ var c=conf(f); if(c==null) return false; if(cf==='high'&&c<85) return false; if(cf==='mid'&&(c<65||c>=85)) return false; if(cf==='low'&&c>=65) return false; }
     if(q && (String(f.title||'')+' '+String(f.path||f.file||'')+' '+repo(f)).toLowerCase().indexOf(q)<0) return false;
     return true;
   }
   function kpis(){
-    var tot=ALL.length, c=ALL.filter(isConf).length, o=ALL.filter(function(f){return !isSup(f)}).length, s=ALL.filter(isSup).length;
+    var base=ALL.filter(function(f){return pass(f,true)});
+    var tot=base.length, c=base.filter(isConf).length, o=base.filter(function(f){return !isSup(f)}).length, s=base.filter(isSup).length;
+    var rs=document.getElementById('fRepo'), scope=rs&&rs.value?rs.options[rs.selectedIndex].text:'all repositories';
     var cur=document.getElementById('fStatus').value;
-    var cards=[['k-all','Total findings',tot,'PII and PHI found','' ],['k-conf','Confirmed issues',c,'Verified as real personal or health data','confirmed'],['k-open','Open issues',o,'Still need to be fixed or reviewed','open'],['k-sup','Suppressed issues',s,'Reviewed and set aside','suppressed']];
+    var cards=[['k-all','Total findings',tot,'In '+scope,'' ],['k-conf','Confirmed issues',c,'Verified as real personal or health data','confirmed'],['k-open','Open issues',o,'Still need to be fixed or reviewed','open'],['k-sup','Suppressed issues',s,'Reviewed and set aside','suppressed']];
     document.getElementById('kpis').innerHTML=cards.map(function(k){return '<div class="kpi '+k[0]+(cur===k[4]&&k[4]?' on':'')+'" data-s="'+k[4]+'"><div class="l">'+k[1]+'</div><div class="n">'+k[2]+'</div><div class="d">'+k[3]+'</div></div>'}).join('');
     document.querySelectorAll('.kpi').forEach(function(el){el.onclick=function(){ document.getElementById('fStatus').value=el.getAttribute('data-s'); draw(); }});
   }
+  var K=[[/diagnos/,"A patient diagnosis is stored","Anyone who can open this repository can read the patient's medical condition.","Replace it with a synthetic test value, or remove the field."],
+    [/record number|mrn/,"A medical record number is stored","This number is the key that opens the patient's chart in clinical systems.","Swap it for a fake ID such as MRN-TEST-0001, or tokenize it."],
+    [/social security|ssn/,"A Social Security number is stored","With a name and this number, someone could open accounts in the patient's name.","Remove it, or use a clearly fake number such as 000-00-0000."],
+    [/birth|dob/,"A date of birth is stored","Together with a name or postcode, a birth date can single out one individual.","Keep only the year, or use a made-up date in test data."],
+    [/medicat|drug|prescri/,"A medication is stored","Drug names reveal what the patient is being treated for.","Use a generic placeholder in tests and samples."],
+    [/lab|result/,"A lab result is stored","Test results are among the most sensitive records a hospital holds.","Take it out of code and sample files."],
+    [/card|payment/,"A payment card number is stored","A real card number in a repository can be copied and used for fraud.","Remove it and use the payment provider's published test numbers."],
+    [/bank|account|iban/,"A bank account number is stored","Account details can be used for fraud or unwanted withdrawals.","Remove it, or keep only the last 4 digits."],
+    [/email/,"An email address is stored","It ties the record to a real person and opens the door to phishing.","Use an example.com address in test data."],
+    [/phone/,"A phone number is stored","It lets someone contact or trace the individual.","Use a fictional number such as 555-0100."],
+    [/address|street|zip/,"A home address is stored","It shows where a real person lives.","Use a made-up address in test data."],
+    [/name/,"A person's name is stored beside sensitive details","The name is what makes the other details traceable to one person.","Use fictional names in samples."],
+    [/insur|policy|member/,"An insurance number is stored","It can be used to claim benefits in someone else's name.","Remove it or replace it with a fake value."],
+    [/passport|licen|national|id/,"A government ID number is stored","Official ID numbers are a prime target for identity fraud.","Remove it or replace it with a fake value."]];
+  var CODE_RX=/\.(py|js|jsx|ts|tsx|java|go|rb|cs|php|kt|rs|swift|sh)$/i;
+  function issue(f){
+    var ft=String(f.data_type||f.finding_type||'').toUpperCase();
+    if(ft!=='PHI'&&ft!=='PII'){ var fp=f.path||f.file||'(unknown file)'; return '<b>'+esc(f.title)+'.</b><div class="sm">'+esc(f.description||'')+'</div><div class="sm"><span class="mono">'+esc(fp)+(f.line?':'+esc(f.line):'')+'</span> in '+esc(repo(f))+'</div>'; }
+    var ph=ft==='PHI', tt=String(f.title||'').toLowerCase();
+    var h=null; for(var i=0;i<K.length;i++){ if(K[i][0].test(tt)){ h=K[i]; break; } }
+    var subj=h?h[1]:(ph?'Health information about a person is stored':'Personal information about a person is stored');
+    var risk=h?h[2]:(ph?'Health data is protected by privacy law (HIPAA) and should not sit in code.':'Personal data should not be kept in code or shared without protection.');
+    var fix=h?h[3]:'Mask or remove it before this repository is shared or used with AI services.';
+    var path=f.path||f.file||'(unknown file)', kind=CODE_RX.test(path)?'code file':'data file';
+    var hit=(f.snapshot||[]).filter(function(z){return z[0]===f.line})[0], key=hit?((/^\s*["']?([\w .-]+)["']?\s*[:=]/.exec(hit[1])||[])[1]):null;
+    var how={structure:key?'the field name "'+String(key).trim()+'" and the format of its value':'the field name and the format of its value',pattern:'a value pattern that matches a '+tt,ner:'a language model that read the text'}[f.detected_by]||'the scanner';
+    var v=f.value, mk=(v&&!f.value_masked&&String(v).length>4)?String(v).slice(0,2)+'••••'+String(v).slice(-2):'';
+    var note=NOTES[(f.rule_id||f.title)+'|'+sev(f)];
+    if(note){ var parts=note.split(/(?<=\.)\s/); return '<b>'+esc(parts[0])+'</b><div class="sm">'+esc(parts.slice(1).join(' '))+'</div><div class="sm"><span class="mono">'+esc(path)+(f.line?':'+esc(f.line):'')+'</span></div>'; }
+    return '<b>'+(ph?'PHI (health data)':'PII (personal data)')+' is exposed in the '+kind+' <span class="mono">'+esc(path)+(f.line?':'+esc(f.line):'')+'</span> of '+esc(repo(f))+'.</b><div class="sm">'+esc(risk)+' It needs to be masked before it is shared or passed to an LLM.</div>';
+  }  var NOTES={};
   var PAGE=1, PER=25;
   function ago(x){ if(!x) return ''; var s=(Date.now()-new Date(x).getTime())/1000; if(s<90) return 'just now'; if(s<3600) return Math.round(s/60)+' min ago'; if(s<86400) return Math.round(s/3600)+'h ago'; return Math.round(s/86400)+' days ago'; }
   function draw(resetPage){
@@ -145,31 +210,51 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}.sub{color:var(--muted)}
       var st=isSup(f)?'Suppressed':'Open';
       return '<tr data-id="'+esc(f.id)+'" class="tr '+s+'"><td><span class="chip s-'+s+'">'+s+'</span></td>'+
         '<td><b>'+esc(f.title)+'</b><div class="sm">'+esc(ago(f.last_seen||f.scanned_at))+'</div></td>'+
-        '<td><span class="chip '+(t==='PHI'?'c-phi':'c-pii')+'">'+t+'</span></td>'+
-        '<td>'+esc(repo(f))+'</td><td class="mono">'+esc(f.path||f.file||'')+'</td>'+
+        '<td><span class="chip '+(t==='PHI'?'c-phi':(t==='PII'?'c-pii':'c-oth'))+'">'+({PHI:'PHI',PII:'PII',SECRETS:'Secret',CODE_SECURITY:'Code security',GOVERNANCE:'AI governance'}[t]||t)+'</span></td>'+
+        '<td>'+esc(repo(f))+'</td><td class="issue">'+issue(f)+'</td>'+
         '<td><div class="conf"><div class="bar"><i style="width:'+(c||0)+'%"></i></div><b>'+(c==null?'—':c+'%')+'</b></div></td>'+
         '<td><span class="chip '+k[1]+'">'+k[0]+'</span><div class="sm">'+st+'</div></td></tr>';
     }).join('');
-    document.getElementById('list').innerHTML='<div class="tbl"><table><thead><tr><th>Severity</th><th>Finding</th><th>Type</th><th>Repository</th><th>File</th><th>Confidence</th><th>Status</th></tr></thead><tbody>'+body+'</tbody></table></div>'+
+    document.getElementById('list').innerHTML='<div class="tbl"><table><thead><tr><th>Severity</th><th>Finding</th><th>Type</th><th>Repository</th><th>What the issue is</th><th>Confidence</th><th>Status</th></tr></thead><tbody>'+body+'</tbody></table></div>'+
       (pages>1?'<div class="pager"><button class="reset" id="pv"'+(PAGE<=1?' disabled':'')+'>Previous</button><span class="sub">Page '+PAGE+' of '+pages+'</span><button class="reset" id="nx"'+(PAGE>=pages?' disabled':'')+'>Next</button></div>':'');
     document.querySelectorAll('tr.tr').forEach(function(r){ r.onclick=function(){ location.href='/findings/'+encodeURIComponent(r.getAttribute('data-id')); }; });    var pv=document.getElementById('pv'), nx=document.getElementById('nx');
     if(pv) pv.onclick=function(){PAGE--; draw(false); window.scrollTo(0,0);};
     if(nx) nx.onclick=function(){PAGE++; draw(false); window.scrollTo(0,0);};
+  }  function liveRefresh(fn){
+    var timer=null;
+    function go(){ clearTimeout(timer); timer=setTimeout(function(){ try{fn()}catch(e){} },500); }
+    try{
+      var es=new EventSource('/findings/events?token='+encodeURIComponent(TOKEN));
+      es.onmessage=function(e){ try{ var d=JSON.parse(e.data); if(d&&d.type&&d.type!=='connected') go(); }catch(_){} };
+    }catch(_){}
+    setInterval(function(){ if(!document.hidden){ try{fn()}catch(e){} } },45000);
   }  function load(){
     var out=[];
     function page(n){ return api('/findings?page_size=500&page='+n).then(function(d){ out=out.concat(d.items||[]); if(d.has_more && n<20) return page(n+1); }); }
     return page(1).then(function(){
-      ALL=out.filter(function(f){var t=String(f.data_type||f.finding_type||'').toUpperCase(); return t==='PHI'||t==='PII';});
-      var seen={}, sel=document.getElementById('fRepo');
+      ALL=out;
+      var seen={}, sel=document.getElementById('fRepo'), keepRepo=sel.value; while(sel.options.length>1) sel.remove(1);
       ALL.forEach(function(f){ if(f.repository_id && !seen[f.repository_id]){ seen[f.repository_id]=1; var o=document.createElement('option'); o.value=f.repository_id; o.textContent=repo(f); sel.appendChild(o);} });
-      draw();
+      var gs=(window.cgpScope&&window.cgpScope())||''; sel.value=keepRepo||(Array.prototype.some.call(sel.options,function(o){return o.value===gs})?gs:''); moreFilters(); draw(false);
     });
   }
-  ['fType','fSev','fRepo','fStatus'].forEach(function(id){document.getElementById(id).onchange=draw});
+  var LABEL={CONFIRMED_SENSITIVE:'Confirmed sensitive',CONTEXTUAL:'Needs review',FAIL:'Failing',REVIEW:'Needs review',UNKNOWN:'Unknown',PASS:'Passing',
+    DETECTED:'Detected in the code',OWNER_CONFIRMED:'Confirmed by a person',CONTRADICTED:'Disputed by a person',not_needed:'Not needed',reviewed:'Reviewed by AI',pending:'Waiting for AI',
+    structure:'Field-name analysis',pattern:'Pattern match',ner:'Language model'};
+  function fill(id,key,alt){ var sel=document.getElementById(id), seen={}, keep=sel.value; while(sel.options.length>1) sel.remove(1); ALL.forEach(function(f){ var v=f[key]||(alt&&f[alt]); if(v&&!seen[v]){ seen[v]=1; var o=document.createElement('option'); o.value=v; o.textContent=LABEL[v]||String(v).replace(/_/g,' '); sel.appendChild(o);} }); sel.value=keep; }
+  function moreFilters(){ fill('fClass','classification'); fill('fGov','governance_status'); fill('fEv','evidence_state'); fill('fAi','ai_status'); fill('fDet','detected_by','source'); }
+  document.getElementById('moreBtn').onclick=function(){ var m=document.getElementById('more'); var open=m.style.display==='none'; m.style.display=open?'flex':'none'; this.innerHTML='More filters '+(open?'&#9652;':'&#9662;'); };
+  ['fClass','fGov','fEv','fAi','fConf','fDet'].forEach(function(id){document.getElementById(id).onchange=function(){draw()}});
+  document.getElementById('fPer').onchange=function(){ PER=parseInt(this.value,10)||25; draw(); };  ['fType','fSev','fRepo','fStatus'].forEach(function(id){document.getElementById(id).onchange=function(){draw()}});
   document.getElementById('q').oninput=draw;
-  document.getElementById('reset').onclick=function(){ ['fType','fSev','fRepo','fStatus'].forEach(function(id){document.getElementById(id).value=''}); document.getElementById('q').value=''; draw(); };
+  document.getElementById('reset').onclick=function(){ ['fType','fSev','fRepo','fStatus','fClass','fGov','fEv','fAi','fConf','fDet'].forEach(function(id){document.getElementById(id).value=''}); document.getElementById('q').value=''; draw(); };
+  api('/findings/issue-notes').then(function(d){ NOTES=d.notes||{}; draw(false); }).catch(function(){});
+  document.getElementById('fRepo').addEventListener('change',function(){ if(window.cgpSetScope) window.cgpSetScope(this.value,true); });
+  window.addEventListener('cgp-repo',function(e){ var s=document.getElementById('fRepo'); s.value=e.detail||''; if(s.value!==(e.detail||'')) s.value=''; draw(); });
+  liveRefresh(function(){ load().catch(function(){}); });
   load().catch(function(e){ document.getElementById('list').innerHTML='<div class="err">'+esc(e.message)+'</div>'; });
 })();
 </script>
+<script src="/_next/static/cgp-topbar.js" defer></script>
 </body>
 </html>

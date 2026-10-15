@@ -15,6 +15,10 @@ mimetypes.add_type("font/woff2", ".woff2")
 
 def shell_for(path: str):
     p = path.strip("/")
+    if p == "ai-inventory":
+        return os.path.join(ROOT, "ai_inventory_board.html")
+    if p == "selftest":
+        return os.path.join(ROOT, "selftest.html")
     if p == "findings":
         return os.path.join(ROOT, "findings_board.html")
     if p == "repo-architecture":

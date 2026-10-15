@@ -21,6 +21,9 @@ from . import ops
 from .ops import router as ops_router
 from .pii_detect import router as detect_router
 from .arch_map import router as arch_map_router
+from .issue_notes import router as issue_notes_router
+from .inv_agent import router as inv_agent_router
+from .selftest import router as selftest_router
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -70,10 +73,25 @@ app.middleware("http")(ui_middleware)
 def startup() -> None:
     db._connect()
     auth.bootstrap()
+    try:  # earlier scans kept secrets / code-security / governance items as evidence only; list them as findings
+        from . import scans as _scans
+        tenants = {u.get("tenant_id") for u in db.items("users", "_global")} | {"default"}
+        for tn in tenants:
+            if _scans.ONLY_PII_PHI:   # keep only personal / health data in the findings list
+                for f in db.items("findings", tn):
+                    if f.get("category") != "pii":
+                        db.put("findings_evidence", tn, f["id"], f)
+                        db.delete("findings", tn, f["id"])
+            else:
+                for f in db.items("findings_evidence", tn):
+                    db.put("findings", tn, f["id"], f)
+                    db.delete("findings_evidence", tn, f["id"])
+    except Exception:
+        logging.getLogger("startup").exception("finding migration skipped")
     ops.start()
 
 
-for r in (arch_map_router, gov_ops, ops_router, detect_router, ui2, ui, core, findings, governance, runtime, graph_export):
+for r in (selftest_router, inv_agent_router, issue_notes_router, arch_map_router, gov_ops, ops_router, detect_router, ui2, ui, core, findings, governance, runtime, graph_export):
     app.include_router(r)
 
 STATIC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
