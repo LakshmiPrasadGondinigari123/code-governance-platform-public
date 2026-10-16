@@ -68,6 +68,7 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}h2{font-size:12px;letter-
 .note.warn{margin-top:8px;font-size:12.5px;color:#b45309;background:rgba(245,158,11,.12);border-radius:8px;padding:6px 10px}
 .trend{display:grid;grid-template-columns:minmax(220px,1fr) 2fr;gap:20px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-top:16px}
 @media(max-width:900px){.trend{grid-template-columns:1fr}}
+.apg{margin-top:10px}.apg>b{display:block;margin-bottom:4px}.apr{display:flex;gap:8px;align-items:center;padding:3px 0;font-size:13.5px}.apr em{color:var(--muted);font-style:normal;font-size:12px}
 .empty{color:var(--muted);padding:16px 0}.err{background:#2a0f12;border:1px solid #7f1d1d;border-radius:10px;padding:14px;color:#fecaca}
 @media(max-width:900px){.side{display:none}.hero{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.rr{grid-template-columns:1fr}}
 .themebtn{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-left:auto}
@@ -180,7 +181,7 @@ html.light .todo b{color:#15803d}
     if(showF&&fail.length) h+='<h2>Fix these first</h2><div class="cards">'+fail.map(function(c){return card(c,'fail')}).join('')+'</div>';
     if(showR&&rev.length){
       h+='<h2>Needs your decision</h2>';
-      if(policy.length) h+='<div class="policy"><b>One setting clears '+policy.length+' of these</b><div class="sub">You have not told the platform which AI providers, models and outside addresses are approved, so these checks cannot be completed:</div><ul>'+policy.map(function(c){return '<li>'+esc(c.plain.title)+'</li>'}).join('')+'</ul><a class="btn primary" href="/runtime">Set approved lists</a></div>';
+      if(policy.length) h+='<div class="policy"><b>One setting clears '+policy.length+' of these</b><div class="sub">You have not told the platform which AI providers, models and outside addresses are approved, so these checks cannot be completed:</div><ul>'+policy.map(function(c){return '<li>'+esc(c.plain.title)+'</li>'}).join('')+'</ul><button class="btn primary" id="polBtn">Choose what you approve</button><div id="polPanel"></div></div>';
       if(other.length) h+='<div class="cards" style="margin-top:14px">'+other.map(function(c){return card(c,'review')}).join('')+'</div>';
     }
     if(showP&&pass.length) h+='<h2>Passing</h2><div class="pass-grid">'+pass.map(function(c){return '<div class="pc"><i>✓</i><div><b>'+esc(c.plain.title)+'</b><span>'+esc(c.plain.reason)+'</span></div></div>'}).join('')+'</div>';
@@ -201,6 +202,31 @@ html.light .todo b{color:#15803d}
     }
     root.querySelectorAll('.own').forEach(function(i){ i.onchange=function(){ save(i.getAttribute('data-c'),{owner:i.value},i); }; });
     root.querySelectorAll('.stat').forEach(function(s){ s.onchange=function(){ save(s.getAttribute('data-c'),{status:s.value},s); }; });
+    var pb=document.getElementById('polBtn');
+    if(pb) pb.onclick=function(){
+      var panel=document.getElementById('polPanel'); if(panel.innerHTML){ panel.innerHTML=''; return; }
+      panel.innerHTML='<div class="sub" style="margin-top:10px">Loading what your scans found\u2026</div>';
+      api('/governance/approval-candidates').then(function(c){
+        function group(title,key,items){ return items.length?'<div class="apg"><b>'+title+'</b>'+items.map(function(i){return '<label class="apr"><input type="checkbox" data-k="'+key+'" value="'+esc(i.name)+'"'+(i.approved?' checked':'')+'> <span>'+esc(i.name)+'</span> <em>'+esc((i.repositories||[]).slice(0,2).join(', '))+'</em></label>'}).join('')+'</div>':''; }
+        panel.innerHTML='<div class="sub" style="margin:10px 0">These are the ones your scans actually found. Tick what your organisation approves, then save.</div>'+
+          group('AI providers','approved_providers',c.providers)+group('AI models','approved_models',c.models)+group('Outside addresses','approved_api_hosts',c.hosts)+
+          '<button class="btn primary" id="polSave" style="margin-top:12px">Save approvals</button> <span id="polMsg" class="sub"></span>';
+        document.getElementById('polSave').onclick=function(){
+          var pol=c.policy||{}, out={approved_tools:pol.approved_tools||[]};
+          ['approved_providers','approved_models','approved_api_hosts'].forEach(function(k){
+            var found={}; (k==='approved_providers'?c.providers:(k==='approved_models'?c.models:c.hosts)).forEach(function(i){found[i.name.toLowerCase()]=1});
+            var keep=(pol[k]||[]).filter(function(x){return !found[String(x).toLowerCase()]});
+            var ticked=[].map.call(panel.querySelectorAll('input[data-k="'+k+'"]:checked'),function(x){return x.value});
+            out[k]=keep.concat(ticked);
+          });
+          document.getElementById('polMsg').textContent='Saving\u2026';
+          fetch('/runtime/policy',{method:'PUT',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify(out)})
+            .then(function(r){ if(r.status===403) throw new Error('Only an administrator can change the approved lists.'); if(!r.ok) throw new Error('Could not save ('+r.status+').'); return r.json(); })
+            .then(function(){ document.getElementById('polMsg').textContent='Saved. Re-checking\u2026'; loadAll().catch(function(){}); })
+            .catch(function(e){ document.getElementById('polMsg').textContent=e.message; });
+        };
+      }).catch(function(){ panel.innerHTML='<div class="sub">The list could not be loaded.</div>'; });
+    };
     root.querySelectorAll('.area').forEach(function(a){ a.onclick=function(){ var d=a.getAttribute('data-d'); DOM=(DOM===d)?null:d; render(); }; });
     root.querySelectorAll('.rr').forEach(function(r){ r.onclick=function(){ var id=r.getAttribute('data-r'); if(window.cgpSetScope) window.cgpSetScope(id,false); else { location.href='/controls?repo='+encodeURIComponent(id); } }; });
     agent(false);

@@ -27,6 +27,7 @@ from .selftest import router as selftest_router
 from .gov_agent import router as gov_agent_router
 from .control_actions import router as control_actions_router
 from .control_history import router as control_history_router
+from .approvals import router as approvals_router
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -94,7 +95,7 @@ def startup() -> None:
     ops.start()
 
 
-for r in (control_history_router, control_actions_router, gov_agent_router, selftest_router, inv_agent_router, issue_notes_router, arch_map_router, gov_ops, ops_router, detect_router, ui2, ui, core, findings, governance, runtime, graph_export):
+for r in (approvals_router, control_history_router, control_actions_router, gov_agent_router, selftest_router, inv_agent_router, issue_notes_router, arch_map_router, gov_ops, ops_router, detect_router, ui2, ui, core, findings, governance, runtime, graph_export):
     app.include_router(r)
 
 STATIC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")

@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir "spacy==3.7.5" \
 
 COPY app ./app
 COPY tests ./tests
+COPY scripts ./scripts
 # release gate 1: every Python file must compile, otherwise this build fails and the running version stays up
 RUN python -m compileall -q app
 # release gate 2: the automated tests must pass, otherwise this build fails and the running version stays up

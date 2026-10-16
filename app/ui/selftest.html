@@ -15,7 +15,7 @@ html.light{--bg:#f6f8fb;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748
 <a href="/system-health" class="sub">&larr; System health</a>
 <h1>Platform self-test</h1><div class="sub">Checks that the numbers on every tab agree with each other and with the stored scans. Nothing is changed.</div>
 <div style="margin:16px 0"><button class="btn" id="run">Run again</button></div>
-<div id="out" class="sub">Running&hellip;</div></div>
+<div id="out" class="sub">Running&hellip;</div><h2 style="margin-top:34px">How accurate is the confidence score?</h2><div class="sub">Measured from your reviewers' own decisions: findings marked as real or disputed on the Findings page.</div><div id="cal" class="sub" style="margin-top:10px">Loading&hellip;</div></div>
 <script>
 (function(){
   var TOKEN=null; try{TOKEN=localStorage.getItem('cgp_token')}catch(e){} if(!TOKEN){ location.href='/login'; return; }
@@ -28,6 +28,7 @@ html.light{--bg:#f6f8fb;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748
         d.checks.map(function(c){return '<div class="row"><span class="tag '+(c.ok?'t-ok':'t-bad')+'">'+(c.ok?'PASS':'FAIL')+'</span><div><b>'+esc(c.name)+'</b><div class="sub">'+esc(c.detail)+'</div></div></div>'}).join('')+'<div class="sub" style="margin-top:12px">Run at '+esc(d.ran_at)+'</div>';
     }).catch(function(e){ if(e) out.innerHTML='<div class="row"><span class="tag t-bad">ERROR</span><div>'+esc(e.message||e)+'</div></div>'; });
   }
-  document.getElementById('run').onclick=run; run();
+  function cal(){ fetch('/findings/calibration',{headers:{Authorization:'Bearer '+TOKEN}}).then(function(r){return r.json()}).then(function(d){ var el=document.getElementById('cal'); el.innerHTML=(d.enough?'':'<div class="row"><span class="tag t-bad">NOT ENOUGH YET</span><div>'+d.reviewed+' of '+d.needed+' reviewed findings needed before these numbers mean anything. Review findings on the Findings page to build the measurement.</div></div>')+d.bands.map(function(b){return '<div class="row"><span class="tag '+(b.confirmed_pct==null?'t-bad':'t-ok')+'">'+esc(b.label)+'</span><div>'+(b.reviewed?b.confirmed+' of '+b.reviewed+' confirmed real ('+b.confirmed_pct+'%)':'No reviewed findings in this band yet')+'</div></div>'}).join(''); }).catch(function(){ document.getElementById('cal').textContent='Not available.'; }); }
+  document.getElementById('run').onclick=run; run(); cal();
 })();
 </script></body></html>
