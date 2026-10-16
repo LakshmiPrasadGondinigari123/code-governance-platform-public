@@ -16,7 +16,10 @@ log = logging.getLogger("scans")
 WORK_DIR = os.path.join(db.DATA_DIR, "work")
 CANCELLED = set()
 _slots = threading.Semaphore(int(os.getenv("MAX_CONCURRENT_SCANS", "2")))
-STAGES = ["fetch", "inventory", "controls", "graph", "persist"]
+STAGES = ["intake", "manifest", "discovery", "ai_detection", "dependency_scan", "security_scan", "secrets_scan", "pii_phi_scan",
+          "policy_evaluation", "evidence_graph", "documentation"]
+# these seven detectors run together in one pass over the files; each reports its own real result when the pass ends
+CONCURRENT = STAGES[1:8]
 # only personal (PII) and health (PHI) data is listed as findings; other detections stay evidence for the ten checks. Set LIST_ONLY_PII_PHI=false to list everything.
 ONLY_PII_PHI = os.getenv("LIST_ONLY_PII_PHI", "true").lower() in ("1", "true", "yes")
 MAX_ZIP_FILES = 20000
@@ -97,6 +100,25 @@ def _safe_extract(data: bytes, dest: str):
         z.extractall(dest)
 
 
+def _complete_scan_stages(doc, result):
+    """Close the seven detector stages with what each one actually found."""
+    fs = result["findings"]
+    cat = Counter(f["category"] for f in fs)
+    phi = sum(1 for f in fs if f["category"] == "pii" and f["rule_id"].startswith("phi."))
+    manifests = len({c.get("manifest") for c in result["components"]})
+    ai = result["ai_components"]
+    det = {
+        "manifest": f"{len(result['components'])} packages from {manifests} dependency file{'s' if manifests != 1 else ''}",
+        "discovery": f"{result['files_scanned']} files, {len(result['languages'])} file types, {len(result['routes'])} API routes, {len(result['hosts'])} outside hosts",
+        "ai_detection": (f"{len(result['providers'])} AI providers, {len(result['models'])} models, {len(ai)} AI components" if (result["providers"] or result["models"] or ai) else "No AI usage found"),
+        "dependency_scan": f"{len(result['components'])} packages checked, {sum(1 for a in ai if a.get('version') is not None)} AI-related",
+        "security_scan": (f"{cat.get('security', 0)} unsafe code patterns" if cat.get("security") else "No unsafe code patterns"),
+        "secrets_scan": (f"{cat.get('secret', 0)} possible passwords or keys" if cat.get("secret") else "No passwords or keys found"),
+        "pii_phi_scan": (f"{cat.get('pii', 0)} items ({phi} health, {cat.get('pii', 0) - phi} personal)" if cat.get("pii") else "No personal or health data found"),
+    }
+    for name in CONCURRENT:
+        _event(doc, name, "completed", det[name])
+
 def _run(tenant, scan_id, git_url, zip_bytes):
     doc = db.get("scans", tenant, scan_id)
     work = os.path.join(WORK_DIR, scan_id)
@@ -104,7 +126,7 @@ def _run(tenant, scan_id, git_url, zip_bytes):
         try:
             doc["status"] = "running"
             doc["started_at"] = iso()
-            _event(doc, "fetch", "running", "Fetching source")
+            _event(doc, "intake", "running", "Fetching source")
             _save(tenant, doc)
             _emit(tenant, doc, "scan_started")
             os.makedirs(work, exist_ok=True)
@@ -130,8 +152,9 @@ def _run(tenant, scan_id, git_url, zip_bytes):
                 _safe_extract(zip_bytes, root)
             if _cancelled(scan_id):
                 raise InterruptedError()
-            _event(doc, "fetch", "completed", "Source ready")
-            _event(doc, "inventory", "running", "Scanning files")
+            _event(doc, "intake", "completed", "Source fetched")
+            for _s in CONCURRENT:
+                _event(doc, _s, "running", "Reading files")
             _save(tenant, doc)
 
             _last = [0.0]
@@ -141,7 +164,7 @@ def _run(tenant, scan_id, git_url, zip_bytes):
                     return
                 _last[0] = time.time()
                 for s_ in doc["stages"]:
-                    if s_["name"] == "inventory":
+                    if s_["name"] in CONCURRENT and s_["status"] == "running":
                         s_["detail"] = f"Scanning files {done}/{total}"
                 try:
                     _save(tenant, doc)
@@ -171,16 +194,16 @@ def _run(tenant, scan_id, git_url, zip_bytes):
                         f["classification"] = o["classification"]
                         f["governance_status"] = o.get("governance_status", "unreviewed")
                         f["comment"] = o.get("comment")
-            _event(doc, "inventory", "completed", f"{result['files_scanned']} files, {len(result['findings'])} findings")
-            _event(doc, "controls", "running", "Evaluating governance controls")
+            _complete_scan_stages(doc, result)
+            _event(doc, "policy_evaluation", "running", "Evaluating the governance checks")
             _save(tenant, doc)
 
             controls = frameworks.evaluate(result["findings"], result["components"], result["evidence"])
-            _event(doc, "controls", "completed", f"{sum(1 for c in controls if c['status']=='satisfied')}/{len(controls)} satisfied")
-            _event(doc, "graph", "running", "Building evidence graph")
+            _event(doc, "policy_evaluation", "completed", f"{sum(1 for c in controls if c['status']=='satisfied')} of {len(controls)} controls satisfied")
+            _event(doc, "evidence_graph", "running", "Linking repository, packages, models and findings")
             graph = scanner.build_graph(doc["repository_id"], doc["repository_name"], result, result["findings"], controls)
-            _event(doc, "graph", "completed", f"{len(graph['nodes'])} nodes, {len(graph['edges'])} edges")
-            _event(doc, "persist", "running", "Saving results")
+            _event(doc, "evidence_graph", "completed", f"{len(graph['nodes'])} nodes, {len(graph['edges'])} links")
+            _event(doc, "documentation", "running", "Writing findings, inventory and summary")
 
             for f in result["findings"]:
                 # personal/health findings are the issues people review; everything else is evidence for the ten checks only
@@ -212,7 +235,7 @@ def _run(tenant, scan_id, git_url, zip_bytes):
             doc["finished_at"] = iso()
             doc["completed_at"] = doc["finished_at"]
             doc["scanned_at"] = doc["finished_at"]
-            _event(doc, "persist", "completed", "Done")
+            _event(doc, "documentation", "completed", f"{doc['summary']['findings_total']} findings and inventory stored")
             _save(tenant, doc)
             try:  # release-gate decision under the active policy, stored with the scan
                 from . import governance_ops

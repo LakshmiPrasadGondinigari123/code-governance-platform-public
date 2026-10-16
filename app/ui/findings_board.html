@@ -212,10 +212,9 @@ html.dark .bar{background:#222e42}</style>
         '<td><b>'+esc(f.title)+'</b><div class="sm">'+esc(ago(f.last_seen||f.scanned_at))+'</div></td>'+
         '<td><span class="chip '+(t==='PHI'?'c-phi':(t==='PII'?'c-pii':'c-oth'))+'">'+({PHI:'PHI',PII:'PII',SECRETS:'Secret',CODE_SECURITY:'Code security',GOVERNANCE:'AI governance'}[t]||t)+'</span></td>'+
         '<td>'+esc(repo(f))+'</td><td class="issue">'+issue(f)+'</td>'+
-        '<td><div class="conf"><div class="bar"><i style="width:'+(c||0)+'%"></i></div><b>'+(c==null?'—':c+'%')+'</b></div></td>'+
-        '<td><span class="chip '+k[1]+'">'+k[0]+'</span><div class="sm">'+st+'</div></td></tr>';
+        '<td title="'+esc((f.confidence_reasons||[]).map(function(r){return (r.effect==='down'?'- ':'+ ')+r.text}).join('\n'))+'"><div class="conf"><div class="bar"><i style="width:'+(c||0)+'%"></i></div><b>'+(c==null?'—':c+'%')+'</b></div><div class="sm">'+(c==null?'':(c>=85?'Very sure':(c>=65?'Fairly sure':'Please check')))+'</div></td></tr>';
     }).join('');
-    document.getElementById('list').innerHTML='<div class="tbl"><table><thead><tr><th>Severity</th><th>Finding</th><th>Type</th><th>Repository</th><th>What the issue is</th><th>Confidence</th><th>Status</th></tr></thead><tbody>'+body+'</tbody></table></div>'+
+    document.getElementById('list').innerHTML='<div class="tbl"><table><thead><tr><th>Severity</th><th>Finding</th><th>Type</th><th>Repository</th><th>What the issue is</th><th>Confidence</th></tr></thead><tbody>'+body+'</tbody></table></div>'+
       (pages>1?'<div class="pager"><button class="reset" id="pv"'+(PAGE<=1?' disabled':'')+'>Previous</button><span class="sub">Page '+PAGE+' of '+pages+'</span><button class="reset" id="nx"'+(PAGE>=pages?' disabled':'')+'>Next</button></div>':'');
     document.querySelectorAll('tr.tr').forEach(function(r){ r.onclick=function(){ location.href='/findings/'+encodeURIComponent(r.getAttribute('data-id')); }; });    var pv=document.getElementById('pv'), nx=document.getElementById('nx');
     if(pv) pv.onclick=function(){PAGE--; draw(false); window.scrollTo(0,0);};

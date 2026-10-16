@@ -129,6 +129,13 @@ def _classification(f: dict) -> str:
     return "CONTEXTUAL"
 
 
+def _cls(f: dict, conf: float) -> str:
+    """Confirmed only when the evidence is strong enough; the rest is left for a person to check."""
+    base = _classification(f)
+    if base in ("CONFIRMED_SENSITIVE", "CONTEXTUAL") and f["category"] in ("pii", "secret"):
+        return "CONFIRMED_SENSITIVE" if conf >= 0.80 else "CONTEXTUAL"
+    return base
+
 def _gov_status(f: dict) -> str:
     gs = f.get("governance_status", "unreviewed")
     if gs == "approved":
@@ -161,7 +168,9 @@ def ui_finding(f: dict, scan: Optional[dict] = None, reveal: bool = False) -> di
         {"secret": "SECRETS", "security": "CODE_SECURITY", "ai_governance": "GOVERNANCE"}.get(f["category"], "GOVERNANCE")
     gov = _gov_status(f)
     st = _review_status(f)
-    conf = {"critical": 0.95, "high": 0.9, "medium": 0.75, "low": 0.55, "info": 0.5}.get(f["severity"], 0.5)
+    from . import confidence as _conf
+    cs = _conf.explain(f)
+    conf = cs["score"]
     sc = scan or {}
     return {
         "id": f["id"], "finding_id": f["id"],
@@ -170,12 +179,13 @@ def ui_finding(f: dict, scan: Optional[dict] = None, reveal: bool = False) -> di
         "rule_id": f["rule_id"], "title": f["title"], "description": f["description"],
         "severity": f["severity"].upper(),
         "data_type": ftype, "finding_type": ftype,
-        "classification": _classification(f),
+        "classification": _cls(f, conf),
         "status": st,
         "evidence_state": "OWNER_CONFIRMED" if st in ("mark_reviewed", "accept") else "CONTRADICTED" if st == "dispute" else "DETECTED",
         "governance_status": gov,
         "governance_relevant": is_governance_relevant(f),
         "governance_confidence": conf,
+        "confidence_reasons": cs["reasons"],
         "requires_review": gov in ("FAIL", "REVIEW") and st == "unreviewed",
         "ai_status": "not_needed",
         "triage_class": None,
@@ -508,10 +518,10 @@ def _plain_control(c, status, not_applicable, evals, per_scan, rt):
                   "REVIEW": "Something was found that a person should look at."}.get(status, "Not checked yet.")
     return {"title": title, "what": what, "label": label, "tone": tone, "reason": reason, "next": nxt}
 
-def build_controls(tenant: str, repository_id: Optional[str] = None) -> list:
-    scans = latest_completed(tenant, repository_id)
+def build_controls(tenant: str, repository_id: Optional[str] = None, scans: Optional[list] = None, events: Optional[list] = None) -> list:
+    scans = scans if scans is not None else latest_completed(tenant, repository_id)
     policy = _policy(tenant)
-    events = _runtime_events(tenant)
+    events = events if events is not None else _runtime_events(tenant)
     allf = db.items("findings", tenant) + db.items("findings_evidence", tenant)
     per_scan = []
     for s in scans:

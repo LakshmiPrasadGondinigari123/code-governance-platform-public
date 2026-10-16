@@ -293,7 +293,8 @@ def _public_scan(s: dict, full: bool = False) -> dict:
     return out
 
 
-STAGE_LABELS = {"fetch": "Fetch source", "inventory": "Scan files", "controls": "Evaluate controls", "graph": "Build evidence graph", "persist": "Save results"}
+STAGE_LABELS = {"intake": "Intake", "manifest": "Manifest", "discovery": "Discovery", "ai_detection": "AI Detection", "dependency_scan": "Dependency Scan", "security_scan": "Security Scan", "secrets_scan": "Secrets Scan", "pii_phi_scan": "PII/PHI Scan", "policy_evaluation": "Policy Evaluation", "evidence_graph": "Evidence Graph", "documentation": "Documentation",
+                "fetch": "Fetch source", "inventory": "Scan files", "controls": "Evaluate controls", "graph": "Build evidence graph", "persist": "Save results"}
 
 
 def _created(s):

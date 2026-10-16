@@ -14,6 +14,12 @@ RUN pip install --no-cache-dir "spacy==3.7.5" \
     "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl"
 
 COPY app ./app
+COPY tests ./tests
+# release gate 1: every Python file must compile, otherwise this build fails and the running version stays up
+RUN python -m compileall -q app
+# release gate 2: the automated tests must pass, otherwise this build fails and the running version stays up
+RUN pip install --no-cache-dir pytest==8.0.0 \
+    && python -m pytest -q tests
 
 RUN useradd --create-home --uid 10001 appuser && mkdir -p /data && chown -R appuser /data
 USER appuser

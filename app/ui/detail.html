@@ -74,6 +74,7 @@ html.light select,html.light input,html.light .filters input,html.light .filters
 html.light .reset{color:#475569;border-color:#cbd5e1;background:#fff}
 html.light .sub{color:#64748b}.snap{background:#fff}
 html.dark .snap{background:#0a101b;border-color:#222e42}html.dark .snap .ln{color:#cbd5e1}html.dark .snap .ln.hit{background:rgba(249,115,22,.15)}html.dark .snap .ln span.n{color:#64748b}html.dark .ring div{background:#131c2b;color:#e8edf5}
+.why-list{margin:8px 0 0;padding:0;list-style:none}.why-list li{padding:3px 0 3px 22px;position:relative;font-size:13.5px}.why-list li:before{position:absolute;left:0;font-weight:800}.why-list li.up:before{content:'+';color:#16a34a}.why-list li.dn:before{content:'\2212';color:#dc2626}.why-list li.bs:before{content:'\2022';color:#64748b}
 </style>
 </head>
 <body>
@@ -188,7 +189,7 @@ html.dark .snap{background:#0a101b;border-color:#222e42}html.dark .snap .ln{colo
           '<div class="badges"><span class="chip '+im[1]+'"><i class="dot"></i>'+im[0]+' importance</span><span class="chip plain">'+kindWord+'</span><span class="chip plain">'+esc(status)+'</span></div></div>'+
           '<p class="summary">'+kindWord+' ('+esc(tt)+') is stored in the file <b>'+esc(a.path||'')+'</b>, on <b>line '+esc(a.line||'?')+'</b>.'+(group.length>1?' The same file has <b>'+(group.length-1)+' more</b> like it.':'')+'</p>'+
           '<div class="section"><h2>How sure we are</h2><div class="card confbox"><div class="ring" style="background:conic-gradient('+confColor+' '+(confPct||0)+'%,#e2e8f0 0)"><div>'+(confPct==null?'\u2014':confPct+'%')+'</div></div>'+
-            '<div style="flex:1;min-width:220px"><b style="font-size:17px">'+esc(confWord)+'</b><div class="sub" style="margin-top:4px">'+(confPct==null?'':'We are '+confPct+'% sure this is real '+(health?'health':'personal')+' data.')+'</div></div></div></div>'+
+            '<div style="flex:1;min-width:220px"><b style="font-size:17px">'+esc(confWord)+'</b><div class="sub" style="margin-top:4px">'+(confPct==null?'':'Score '+confPct+'%. Here is what that is based on:')+'</div>'+'<ul class="why-list">'+((me.confidence_reasons||[]).map(function(r){return '<li class="'+(r.effect==='down'?'dn':(r.effect==='up'?'up':'bs'))+'">'+esc(r.text)+'</li>'}).join(''))+'</ul></div></div></div>'+
           '<div class="section"><h2>What we found</h2>'+
             (foundVal?'<div style="margin:6px 0">Value found: <span class="found">'+esc(foundVal)+'</span></div>':'')+
             (snapHtml?'<div class="snap">'+snapHtml+'</div>':'')+'</div>'+
